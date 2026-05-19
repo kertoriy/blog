@@ -1,0 +1,28 @@
+{
+  "name": "ker-edit-blog",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "docker:up": "docker compose --env-file .env up -d",
+    "docker:down": "docker compose --env-file .env down",
+    "docker:logs": "docker compose --env-file .env logs -f",
+    "docker:ps": "docker compose --env-file .env ps"
+  },
+  "dependencies": {
+    "ioredis": "^5.10.1",
+    "mongodb": "^6.16.0",
+    "mysql2": "^3.14.1",
+    "@tiptap/starter-kit": "^3.23.4",
+    "@tiptap/vue-3": "^3.23.4",
+    "@vue-flow/core": "^1.48.2",
+    "lucide-vue-next": "^1.0.0",
+    "nuxt": "^4.4.5",
+    "vue": "^3.5.34",
+    "vue-router": "^5.0.6"
+  }
+}
