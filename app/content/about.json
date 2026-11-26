@@ -1,0 +1,314 @@
+{
+  "profile": {
+    "greeting": "你好，我是 Kertoriy",
+    "tagline": "一个热爱折腾代码与界面的全栈开发者，在这里记录开发笔记、顺手工具与日常折腾心得。",
+    "birthYear": "2002",
+    "codingSince": "2020",
+    "badges": [
+      "全栈开发",
+      "界面细节控",
+      "INTP"
+    ]
+  },
+  "deskImage": "devices/desk-setup.jpg",
+  "devices": [
+    {
+      "id": "kuangshi-x",
+      "role": "主力设备",
+      "name": "机械革命 旷世 X",
+      "shortName": "旷世 X",
+      "desc": "搭载 i3-13500HX、RTX 5060、32GB 内存与 2TB 固态，运行 Windows 系统，负责日常开发与娱乐。",
+      "image": "devices/mechrevo-kuangshi-x.jpg",
+      "icon": "laptop",
+      "deskPos": {
+        "x": 15.5,
+        "y": 50
+      }
+    },
+    {
+      "id": "e5-server",
+      "role": "主力设备",
+      "name": "E5-2698 v4 平台",
+      "shortName": "E5 算力节点",
+      "desc": "配备 Xeon E5-2698 v4、RTX 3060Ti、128GB ECC 内存与 2TB 固态，运行 Ubuntu 26 系统，作为多核辅助算力节点承接容器、数据库与后台服务常驻运行。",
+      "image": "devices/xeon-e5-server.jpg",
+      "icon": "server",
+      "deskPos": {
+        "x": 90.5,
+        "y": 42
+      }
+    },
+    {
+      "id": "redmi-a27q",
+      "role": "双屏显示",
+      "name": "Redmi A27Q 2026 × 2",
+      "shortName": "Redmi 双屏",
+      "desc": "两台 27 英寸 2K 120Hz 显示器组成双屏工作区，主屏写代码与跑终端，副屏对照文档与实时预览。",
+      "image": "devices/redmi-a27q-2026.jpg",
+      "icon": "monitor",
+      "deskPos": {
+        "x": 53,
+        "y": 33
+      }
+    },
+    {
+      "id": "aula-f87-pro",
+      "role": "机械键盘",
+      "name": "狼蛛 F87 Pro 大宗师版",
+      "shortName": "狼蛛 F87 Pro",
+      "desc": "焦糖拿铁配色 87 配列机械键盘，手感温润跟手，长时间编码依然轻快舒适。",
+      "image": "devices/aula-f87-pro.jpg",
+      "icon": "keyboard",
+      "deskPos": {
+        "x": 50,
+        "y": 79
+      }
+    },
+    {
+      "id": "logi-m750",
+      "role": "无线鼠标",
+      "name": "罗技 Logi M750",
+      "shortName": "罗技 M750",
+      "desc": "珍珠白配色人体工学轻音无线鼠标，搭配疾速滚轮，写代码与翻阅技术文档都很顺滑。",
+      "image": "devices/logi-m750.jpg",
+      "icon": "mouse",
+      "deskPos": {
+        "x": 71.8,
+        "y": 79.5
+      }
+    },
+    {
+      "id": "beitong-kunpeng20",
+      "role": "游戏手柄",
+      "name": "北通鲲鹏 20",
+      "shortName": "北通鲲鹏 20",
+      "desc": "绝尘白灰白撞色三模无线手柄，配备北辰摇杆与微动按键，手感利落，是闲暇畅玩游戏的主力。",
+      "image": "devices/beitong-kunpeng20.jpg",
+      "icon": "gamepad",
+      "deskPos": {
+        "x": 50.4,
+        "y": 61
+      }
+    },
+    {
+      "id": "dji-mic-mini",
+      "role": "Vibe Coding 麦",
+      "name": "大疆 DJI Mic Mini",
+      "shortName": "DJI Mic Mini",
+      "desc": "极轻小巧的桌面无线麦克风，随时语音口述思路与需求，让日常 Vibe Coding 更顺手高效。",
+      "image": "devices/dji-mic-mini.jpg",
+      "icon": "mic",
+      "deskPos": {
+        "x": 30.6,
+        "y": 78
+      }
+    },
+    {
+      "id": "gallop-pro-x20",
+      "role": "骨传导耳机",
+      "name": "冠听 Gallop Pro X20",
+      "shortName": "冠听 X20",
+      "desc": "开放双耳的轻量化骨传导耳机，不入耳不压耳道，长时间开发听歌、开会也能兼顾环境声。",
+      "image": "devices/gallop-pro-x20.jpg",
+      "icon": "headphones",
+      "deskPos": {
+        "x": 86.2,
+        "y": 80
+      }
+    },
+    {
+      "id": "iqoo-neo10",
+      "role": "随身主力机",
+      "name": "iQOO Neo10",
+      "shortName": "iQOO Neo10",
+      "desc": "12GB + 512GB 随身主力配置，兼顾日常通讯、碎片灵感记录以及移动端页面真机预览调试。",
+      "image": "devices/iqoo-neo10.jpg",
+      "icon": "smartphone",
+      "deskPos": {
+        "x": 20.3,
+        "y": 80
+      }
+    }
+  ],
+  "techs": [
+    {
+      "name": "SpringBoot",
+      "note": "写业务干净利落，约定清晰很省心",
+      "logo": "sites/springboot.svg"
+    },
+    {
+      "name": "Vite",
+      "note": "毫秒级热更新，改一像素即刻反馈",
+      "logo": "sites/vite.svg"
+    },
+    {
+      "name": "Vue3",
+      "note": "组合式写法自然，写页面格外舒适",
+      "logo": "sites/vue.svg"
+    },
+    {
+      "name": "TailwindCss",
+      "note": "原子化样式直给，雕琢细节真的爽",
+      "logo": "sites/tailwind.svg"
+    },
+    {
+      "name": "Python",
+      "note": "带我推开编程大门的启蒙语言",
+      "logo": "sites/python.svg"
+    },
+    {
+      "name": "Flutter",
+      "note": "最钟爱的跨端移动开发语言",
+      "logo": "sites/flutter.svg"
+    },
+    {
+      "name": "PostgreSQL",
+      "note": "严谨强大的关系型数据库首选",
+      "logo": "sites/postgresql.svg"
+    },
+    {
+      "name": "Redis",
+      "note": "高速缓存与实时状态离不开它",
+      "logo": "sites/redis.svg"
+    },
+    {
+      "name": "MQTT",
+      "note": "轻量可靠的实时消息传输协议",
+      "logo": "sites/mqtt.svg"
+    },
+    {
+      "name": "Caddy",
+      "note": "零配置自动 HTTPS 的运维之神",
+      "logo": "sites/caddy.svg"
+    },
+    {
+      "name": "Docker",
+      "note": "一次构建、随处运行的容器化分发",
+      "logo": "sites/docker.svg"
+    }
+  ],
+  "tools": [
+    {
+      "name": "Codex",
+      "note": "专注终端与工程任务的自动化编程搭档",
+      "logo": "sites/codex.svg"
+    },
+    {
+      "name": "ClaudeCode",
+      "note": "命令行里的深度推理与代码重构利器",
+      "logo": "sites/claudecode.svg"
+    },
+    {
+      "name": "Cursor",
+      "note": "AI 原生补全与多文件协同编辑器",
+      "logo": "sites/cursor.svg",
+      "invertDark": true
+    },
+    {
+      "name": "Antigravity",
+      "note": "从界面设计到浏览器核对一体的智能体工作台",
+      "logo": "sites/antigravity.svg"
+    },
+    {
+      "name": "VsCode",
+      "note": "插件生态最丰富、陪伴最久的主力编辑器",
+      "logo": "sites/vscode.svg"
+    }
+  ],
+  "models": [
+    {
+      "name": "Claude",
+      "note": "代码审美、长上下文理解与重构表现极佳",
+      "logo": "sites/claude.svg"
+    },
+    {
+      "name": "Gemini",
+      "note": "多模态视觉理解与超大窗口全能助手",
+      "logo": "sites/gemini.svg"
+    },
+    {
+      "name": "ChatGPT",
+      "note": "日常问答、方案发散与问题排查高频入口",
+      "logo": "sites/chatgpt.svg",
+      "invertDark": true
+    },
+    {
+      "name": "DeepSeek",
+      "note": "中文语境敏锐、性价比极高的开源推理之光",
+      "logo": "sites/deepseek.svg"
+    }
+  ],
+  "games": [
+    {
+      "name": "原神",
+      "genre": "开放世界 RPG",
+      "desc": "喜欢提瓦特的美术风景、原声音乐与角色塑造，闲暇时漫步璃月港看灯火格外治愈。",
+      "image": "games/genshin.jpg"
+    }
+  ],
+  "personality": {
+    "mbti": "INTP",
+    "archetype": "逻辑学家 · The Logician",
+    "mascot": "about/intp-mascot.png",
+    "summary": "热衷拆解原理与梳理结构，比起盲目堆砌，更相信想明白后的克制与自洽。",
+    "dimensions": [
+      {
+        "letter": "I",
+        "title": "内向沉思",
+        "desc": "安静独处时思考最清晰，习惯先把复杂系统在脑海里推演完整再动手。"
+      },
+      {
+        "letter": "N",
+        "title": "抽象直觉",
+        "desc": "比起零散表象，更在意底层模式、结构演进与架构的长期可扩展性。"
+      },
+      {
+        "letter": "T",
+        "title": "逻辑自洽",
+        "desc": "重视因果链条与信息密度，对代码整洁、语义统一和对齐细节有天然执念。"
+      },
+      {
+        "letter": "P",
+        "title": "开放探索",
+        "desc": "保持好奇与弹性，一旦发现更干净顺手的方案，就会果断重构迭代。"
+      }
+    ]
+  },
+  "futureStatus": {
+    "title": "咸鱼中",
+    "badge": "成就 & 未来",
+    "subtitle": "暂时不急着立宏大 Flag，先慢慢写代码、逛世界、享受当下。"
+  },
+  "socials": [
+    {
+      "key": "wechat",
+      "name": "微信",
+      "handle": "kertoriy",
+      "logo": "sites/wechat.svg"
+    },
+    {
+      "key": "bilibili",
+      "name": "Bilibili",
+      "handle": "kertoriy",
+      "logo": "sites/bilibili.svg"
+    },
+    {
+      "key": "qq",
+      "name": "QQ",
+      "handle": "3512924221",
+      "logo": "sites/qq.svg"
+    },
+    {
+      "key": "mail163",
+      "name": "163 邮箱",
+      "handle": "kertoriy@163.com",
+      "logo": "sites/mail163.svg"
+    },
+    {
+      "key": "gmail",
+      "name": "Gmail",
+      "handle": "kertoriy@gmail.com",
+      "logo": "sites/gmail.svg"
+    }
+  ]
+}

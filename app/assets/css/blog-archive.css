@@ -1,0 +1,90 @@
+@reference "./main.css";
+@layer theme, base, components, utilities;
+
+/* 归档页专属样式：固定边距无 max-w + 左侧日期 div 与右侧内容 div 分体 + 紧凑内边距 */
+@layer components {
+  .archive-page {
+    @apply flex w-full flex-col gap-5 py-1;
+  }
+
+  .archive-year-group {
+    @apply flex flex-col gap-2;
+  }
+
+  .archive-year-bar {
+    @apply flex items-center justify-between gap-2 px-0.5;
+  }
+
+  .archive-year-pill {
+    @apply m-0 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[12.5px] font-semibold tabular-nums text-ink-secondary;
+    background-color: var(--ui-bar-bg);
+  }
+
+  .archive-year-pill i {
+    @apply size-1.5 rounded-full bg-accent;
+  }
+
+  .archive-year-stats {
+    @apply font-mono text-[11.5px] tabular-nums text-ink-muted;
+  }
+
+  .archive-list {
+    @apply m-0 flex list-none flex-col gap-1.5 p-0;
+  }
+
+  /* 紧凑单行分体：左日期 div + 右内容 div */
+  .archive-row {
+    @apply flex w-full items-stretch gap-1.5 no-underline;
+  }
+
+  .archive-date-box {
+    @apply flex h-[32px] shrink-0 items-center justify-center rounded-[8px] border border-border px-2 font-mono text-[12px] font-medium tabular-nums text-ink-muted transition-[border-color,background-color,color] duration-150;
+    background-color: var(--ui-bar-bg);
+  }
+
+  .archive-content-box {
+    @apply flex h-[32px] min-w-0 flex-1 items-center justify-between gap-2.5 rounded-[8px] border border-border px-2.5 transition-[border-color,background-color] duration-150;
+    background-color: var(--ui-bar-bg);
+  }
+
+  .archive-row-main {
+    @apply flex min-w-0 flex-1 items-center gap-1.5;
+  }
+
+  .archive-row-icon {
+    @apply inline-flex shrink-0 items-center justify-center text-ink-muted transition-colors duration-150;
+  }
+
+  .archive-row-title {
+    @apply min-w-0 truncate text-[13.5px] font-medium leading-snug text-ink;
+  }
+
+  .archive-row-tags {
+    @apply flex shrink-0 items-center gap-1 text-[11.5px] whitespace-nowrap text-ink-muted/80 transition-colors duration-150;
+  }
+
+  .archive-row-hash {
+    @apply opacity-65;
+  }
+
+  .archive-row:hover .archive-date-box,
+  .archive-row:hover .archive-content-box {
+    border-color: var(--ui-border-strong);
+    background-color: var(--ui-nav-active-bg);
+  }
+
+  .archive-row:hover .archive-date-box,
+  .archive-row:hover .archive-row-icon {
+    color: var(--ui-ink-secondary);
+  }
+
+  .archive-row:hover .archive-row-tags {
+    color: var(--ui-ink-muted);
+  }
+
+  @container blog-content (width < 600px) {
+    .archive-row-tags {
+      display: none;
+    }
+  }
+}

@@ -1,0 +1,88 @@
+[
+  {
+    "title": "ChatGPT",
+    "desc": "OpenAI 对话与编程助手，日常问答、构思与代码排错",
+    "category": "AI 与常用",
+    "url": "https://chatgpt.com",
+    "logo": "sites/chatgpt.svg",
+    "invertDark": true
+  },
+  {
+    "title": "Claude",
+    "desc": "擅长长文本理解、架构推理与代码重构的 AI 助手",
+    "category": "AI 与常用",
+    "url": "https://claude.ai",
+    "logo": "sites/claude.svg"
+  },
+  {
+    "title": "GitHub",
+    "desc": "代码仓库托管、开源检索与静态博客协作平台",
+    "category": "AI 与常用",
+    "url": "https://github.com",
+    "logo": "sites/github.svg",
+    "invertDark": true
+  },
+  {
+    "title": "Cloudflare",
+    "desc": "全球边缘节点加速、DNS 解析与 Pages 静态托管",
+    "category": "AI 与常用",
+    "url": "https://www.cloudflare.com",
+    "logo": "sites/cloudflare.svg"
+  },
+  {
+    "title": "Nuxt",
+    "desc": "Nuxt 4 官方文档、目录约定与静态站点生成指南",
+    "category": "开发与文档",
+    "url": "https://nuxt.com",
+    "logo": "sites/nuxt.svg"
+  },
+  {
+    "title": "Vue 3",
+    "desc": "渐进式前端框架，组合式 API 与响应式核心文档",
+    "category": "开发与文档",
+    "url": "https://vuejs.org",
+    "logo": "sites/vue.svg"
+  },
+  {
+    "title": "Tailwind CSS",
+    "desc": "原子化样式系统与 v4 语义设计变量速查手册",
+    "category": "开发与文档",
+    "url": "https://tailwindcss.com",
+    "logo": "sites/tailwind.svg"
+  },
+  {
+    "title": "TypeScript",
+    "desc": "类型系统手册、工具类型与工程配置官方参考",
+    "category": "开发与文档",
+    "url": "https://www.typescriptlang.org",
+    "logo": "sites/typescript.svg"
+  },
+  {
+    "title": "Figma",
+    "desc": "界面原型设计、组件规范整理与在线切图协作",
+    "category": "设计与效率",
+    "url": "https://www.figma.com",
+    "logo": "sites/figma.svg"
+  },
+  {
+    "title": "Lucide",
+    "desc": "干净克制、笔触统一的开源矢量线条图标库",
+    "category": "设计与效率",
+    "url": "https://lucide.dev",
+    "logo": "sites/lucide.svg"
+  },
+  {
+    "title": "Excalidraw",
+    "desc": "轻量手绘风格白板，快速勾勒架构图与流程草图",
+    "category": "设计与效率",
+    "url": "https://excalidraw.com",
+    "logo": "sites/excalidraw.svg"
+  },
+  {
+    "title": "Vite",
+    "desc": "极速前端构建工具与即时模块热更新开发服务",
+    "category": "设计与效率",
+    "url": "https://vite.dev",
+    "logo": "sites/vite.svg"
+  }
+]

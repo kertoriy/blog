@@ -1,0 +1,50 @@
+[
+  {
+    "name": "风物笔记",
+    "desc": "记录前端工程、界面设计与日常观察的个人角落。",
+    "url": "https://example.com/wind-notes",
+    "avatar": "friends/avatar-1.svg",
+    "group": "技术与折腾",
+    "tag": "前端工程"
+  },
+  {
+    "name": "半糖实验室",
+    "desc": "效率工具、交互实验与开源项目的持续折腾记录。",
+    "url": "https://example.com/halfsugar-lab",
+    "avatar": "friends/avatar-2.svg",
+    "group": "技术与折腾",
+    "tag": "独立开发"
+  },
+  {
+    "name": "星尘手札",
+    "desc": "关于 TypeScript、编译原理与现代 Web 架构的实践笔记。",
+    "url": "https://example.com/stardust-dev",
+    "avatar": "friends/avatar-6.svg",
+    "group": "技术与折腾",
+    "tag": "全栈笔记"
+  },
+  {
+    "name": "紫藤书房",
+    "desc": "偏安静阅读体验的个人 Markdown 知识库与书影摘录。",
+    "url": "https://example.com/wisteria-study",
+    "avatar": "friends/avatar-3.svg",
+    "group": "阅读与庭院",
+    "tag": "数字花园"
+  },
+  {
+    "name": "青苔小院",
+    "desc": "缓慢写作、胶片摄影与生活碎片的长期存档空间。",
+    "url": "https://example.com/moss-yard",
+    "avatar": "friends/avatar-4.svg",
+    "group": "阅读与庭院",
+    "tag": "生活志"
+  },
+  {
+    "name": "月见茶室",
+    "desc": "收集界面美学、字体排版灵感与独立博客漫游随笔。",
+    "url": "https://example.com/tsukimi-tea",
+    "avatar": "friends/avatar-5.svg",
+    "group": "阅读与庭院",
+    "tag": "设计随笔"
+  }
+]

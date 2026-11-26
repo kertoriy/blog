@@ -1,0 +1,365 @@
+@reference "./main.css";
+@layer theme, base, components, utilities;
+
+/* 赛博情绪垃圾桶专属样式：高性能单层 Canvas 特效 + Q 版呆傻小猪绕脖牌 + 8 键指法道具台 */
+@layer components {
+  .trash-page {
+    min-height: calc(100dvh - 102px);
+    @apply flex w-full flex-col justify-between gap-3 py-1 select-none;
+  }
+
+  /* 中间互动舞台 */
+  .trash-stage {
+    @apply relative flex min-h-[400px] flex-1 flex-col items-center justify-center overflow-hidden rounded-[22px] px-6 py-5 select-none;
+    contain: layout style;
+  }
+
+  .trash-stage-bg {
+    @apply pointer-events-none absolute inset-0 z-0 overflow-hidden;
+  }
+
+  .trash-stage-aura {
+    @apply absolute top-1/2 left-1/2 h-[460px] w-[460px] -translate-x-1/2 -translate-y-1/2 rounded-full;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--ui-accent) 16%, transparent) 0%,
+      color-mix(in srgb, var(--ui-accent) 5%, transparent) 46%,
+      transparent 72%
+    );
+  }
+
+  .trash-stage-dots {
+    @apply absolute inset-0 opacity-55;
+    background-image: radial-gradient(color-mix(in srgb, var(--ui-ink) 9%, transparent) 1px, transparent 1px);
+    background-size: 22px 22px;
+    -webkit-mask-image: radial-gradient(ellipse 68% 72% at 50% 50%, #000 30%, transparent 100%);
+    mask-image: radial-gradient(ellipse 68% 72% at 50% 50%, #000 30%, transparent 100%);
+  }
+
+  .trash-stage-watermark {
+    @apply absolute right-6 bottom-1 font-sans text-[clamp(76px,12cqi,148px)] font-extrabold leading-none tracking-[0.08em];
+    color: color-mix(in srgb, var(--ui-ink) 3.2%, transparent);
+  }
+
+  /* 左上角常驻 COMBO 与右上角轻量化工具 */
+  .trash-combo-badge {
+    @apply pointer-events-none absolute top-4 left-5 z-20 inline-flex h-[32px] items-center gap-1.5 rounded-full border border-border/80 px-3.5 font-mono text-[12px] font-bold tracking-[0.04em] text-ink-muted transition-[border-color,background-color,color] duration-150;
+    background-color: var(--ui-bar-bg);
+    will-change: transform;
+  }
+
+  .trash-combo-badge.is-active {
+    border-color: color-mix(in srgb, var(--ui-accent) 42%, var(--ui-border));
+    background-color: var(--ui-accent-soft);
+    @apply text-accent-ink;
+  }
+
+  .trash-combo-badge.is-bump {
+    animation: trash-combo-bump 190ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .trash-combo-label {
+    @apply text-[11px] font-bold tracking-[0.08em] opacity-80;
+  }
+
+  .trash-combo-value {
+    @apply text-[13.5px] font-extrabold tabular-nums;
+  }
+
+  @keyframes trash-combo-bump {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.14); }
+    100% { transform: scale(1); }
+  }
+
+  .trash-stage-tools {
+    @apply absolute top-4 right-5 z-20 flex items-center gap-2;
+  }
+
+  .trash-edit-btn {
+    @apply inline-flex h-[32px] cursor-pointer items-center gap-1.5 rounded-full border border-border/80 px-3 text-[12px] font-medium text-ink-secondary transition-[border-color,color,background-color] duration-150 hover:border-border-strong hover:text-ink;
+    background-color: var(--ui-bar-bg);
+  }
+
+  .trash-edit-btn.is-active {
+    border-color: color-mix(in srgb, var(--ui-accent) 52%, var(--ui-border));
+    background-color: var(--ui-accent-soft);
+    @apply font-semibold text-accent-ink;
+  }
+
+  .trash-tool-btn {
+    @apply inline-grid size-[32px] cursor-pointer place-items-center rounded-full border border-border/80 text-ink-secondary transition-[border-color,color,background-color] duration-150 hover:border-border-strong hover:text-ink;
+    background-color: var(--ui-bar-bg);
+  }
+
+  /* 中央 IP 形象区 */
+  .trash-mascot-zone {
+    @apply relative z-10 flex flex-col items-center;
+  }
+
+  .trash-mascot-actor {
+    @apply relative inline-flex items-center justify-center;
+    will-change: transform;
+  }
+
+  .trash-mascot-actor.is-hit-left {
+    animation: trash-squish-left 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .trash-mascot-actor.is-hit-right {
+    animation: trash-squish-right 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .trash-mascot-actor.is-hit-heavy {
+    animation: trash-squish-heavy 250ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @keyframes trash-squish-left {
+    0% { transform: scale(1, 1) rotate(0deg); }
+    30% { transform: scale(1.16, 0.85) rotate(-7deg) translateX(-9px); }
+    68% { transform: scale(0.96, 1.04) rotate(2.5deg) translateX(2px); }
+    100% { transform: scale(1, 1) rotate(0deg); }
+  }
+
+  @keyframes trash-squish-right {
+    0% { transform: scale(1, 1) rotate(0deg); }
+    30% { transform: scale(1.16, 0.85) rotate(7deg) translateX(9px); }
+    68% { transform: scale(0.96, 1.04) rotate(-2.5deg) translateX(-2px); }
+    100% { transform: scale(1, 1) rotate(0deg); }
+  }
+
+  @keyframes trash-squish-heavy {
+    0% { transform: scale(1, 1); }
+    25% { transform: scale(1.22, 0.78) translateY(9px); }
+    65% { transform: scale(0.94, 1.07) translateY(-5px); }
+    100% { transform: scale(1, 1); }
+  }
+
+  .trash-mascot-img {
+    @apply block size-[clamp(235px,37dvh,296px)] object-contain;
+  }
+
+  /* 绕脖挂绳（与角色脖颈同坐标系，1:1 贴合脖颈弧度） */
+  .trash-neck-collar {
+    @apply pointer-events-none absolute inset-0 z-15 block size-full;
+  }
+
+  /* 囚犯挂脖牌：双垂绳从绕脖绳垂下 + 2D 扁平风胸前挂牌（受击钟摆摇晃，保持绝对居中不偏移） */
+  .trash-placard {
+    @apply absolute top-[61.0%] left-1/2 z-20 flex w-[42%] -translate-x-1/2 flex-col items-center;
+    transform-origin: 50% 0%;
+    will-change: transform;
+  }
+
+  .trash-placard.is-swing-left {
+    animation: trash-placard-swing-left 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .trash-placard.is-swing-right {
+    animation: trash-placard-swing-right 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .trash-placard.is-swing-heavy {
+    animation: trash-placard-swing-heavy 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @keyframes trash-placard-swing-left {
+    0% { transform: rotate(0deg); }
+    24% { transform: rotate(-7deg); }
+    56% { transform: rotate(4deg); }
+    80% { transform: rotate(-1.5deg); }
+    100% { transform: rotate(0deg); }
+  }
+
+  @keyframes trash-placard-swing-right {
+    0% { transform: rotate(0deg); }
+    24% { transform: rotate(7deg); }
+    56% { transform: rotate(-4deg); }
+    80% { transform: rotate(1.5deg); }
+    100% { transform: rotate(0deg); }
+  }
+
+  @keyframes trash-placard-swing-heavy {
+    0% { transform: rotate(0deg); }
+    22% { transform: rotate(9deg); }
+    52% { transform: rotate(-6deg); }
+    78% { transform: rotate(2.5deg); }
+    100% { transform: rotate(0deg); }
+  }
+
+  .trash-placard-rope {
+    @apply pointer-events-none relative z-2 block w-full overflow-visible;
+    aspect-ratio: 120 / 26;
+    height: auto;
+  }
+
+  .trash-placard-board {
+    @apply relative z-1 flex min-h-[40px] w-full items-center justify-center rounded-[10px] border-[2.5px] px-2.5 py-1 text-center transition-[border-color,box-shadow] duration-150;
+    margin-top: -6.5%;
+    border-color: #533240;
+    background-color: #fffdf9;
+    color: #2c1e24;
+    box-shadow: 0 3px 0 rgb(83 50 64 / 0.14);
+  }
+
+  .trash-placard.is-editing .trash-placard-board {
+    border-color: var(--ui-accent);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--ui-accent) 22%, transparent);
+  }
+
+  .trash-placard-eyelet {
+    @apply pointer-events-none absolute top-[3px] size-[6px] -translate-x-1/2 rounded-full border-[1.5px] border-[#533240] bg-[#f7e2ea];
+  }
+
+  .trash-placard-eyelet.is-left {
+    left: 18.33%;
+  }
+
+  .trash-placard-eyelet.is-right {
+    left: 81.67%;
+  }
+
+  .trash-placard-text {
+    @apply block w-full truncate pt-0.5 text-[13.5px] font-extrabold tracking-[0.02em] text-[#1c1824];
+  }
+
+  .trash-placard-text.is-placeholder {
+    @apply font-semibold text-[#8c8496];
+  }
+
+  .trash-mascot-shadow {
+    @apply mt-1 h-[12px] w-[144px] rounded-full;
+    background: radial-gradient(ellipse at center, color-mix(in srgb, var(--ui-ink) 14%, transparent) 0%, transparent 72%);
+  }
+
+  /* IP 下方独立编辑台插槽（固定最小高度，开关编辑不引起角色上下跳动） */
+  .trash-editor-slot {
+    @apply mt-2.5 flex min-h-[40px] items-center justify-center;
+  }
+
+  .trash-editor-bar {
+    @apply flex h-[38px] w-[min(290px,82vw)] items-center gap-2 rounded-full border border-border-strong pl-3.5 pr-1.5 transition-[border-color,box-shadow] duration-150;
+    background-color: var(--ui-canvas);
+    box-shadow: 0 2px 10px color-mix(in srgb, var(--ui-ink) 5%, transparent);
+  }
+
+  .trash-editor-bar:focus-within {
+    border-color: color-mix(in srgb, var(--ui-accent) 62%, var(--ui-border));
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--ui-accent) 14%, transparent),
+      0 4px 14px color-mix(in srgb, var(--ui-accent) 12%, transparent);
+  }
+
+  .trash-editor-icon {
+    @apply shrink-0 text-accent-ink;
+  }
+
+  .trash-editor-input {
+    @apply min-w-0 flex-1 border-0 bg-transparent text-[13px] font-medium text-ink outline-none select-text placeholder:text-ink-muted/75;
+  }
+
+  .trash-editor-confirm {
+    @apply inline-flex h-[26px] shrink-0 cursor-pointer items-center rounded-full bg-accent px-3 text-[11.5px] font-semibold text-white transition-opacity duration-150 hover:opacity-90;
+  }
+
+  .trash-edit-hint {
+    @apply m-0 text-[11.5px] text-ink-muted/85;
+  }
+
+  /* 单层高性能 Canvas 特效叠加层 */
+  .trash-fx-canvas {
+    @apply pointer-events-none absolute inset-0 z-30 block size-full;
+  }
+
+  /* 底部 8 键标准指法情绪 PNG 道具台（ASDF · JKL;，键帽标签居中置于每个卡片下方） */
+  .trash-dock {
+    @apply flex flex-wrap items-start justify-center gap-3.5 pb-1 select-none;
+  }
+
+  .trash-dock-hand {
+    @apply flex items-start gap-2;
+  }
+
+  .trash-dock-split {
+    @apply mt-[22px] h-8 w-px rounded-full bg-border/80;
+  }
+
+  .trash-weapon-slot {
+    @apply flex w-[84px] flex-col items-center gap-1.5;
+  }
+
+  .trash-weapon-btn {
+    @apply relative flex w-full cursor-pointer flex-col items-center gap-1.5 rounded-[16px] border border-transparent px-2.5 py-2.5 transition-[border-color,background-color,transform] duration-150 hover:-translate-y-0.5 hover:border-border-strong;
+    background-color: var(--ui-bar-bg);
+  }
+
+  .trash-weapon-slot.is-pressed .trash-weapon-btn {
+    transform: translateY(1px) scale(0.975);
+    border-color: color-mix(in srgb, var(--ui-accent) 28%, var(--ui-border));
+    background-color: color-mix(in srgb, var(--ui-accent) 6%, var(--ui-bar-bg));
+  }
+
+  .trash-weapon-img {
+    @apply size-[42px] object-contain transition-transform duration-150;
+  }
+
+  .trash-weapon-btn:hover .trash-weapon-img {
+    transform: rotate(-6deg) scale(1.06);
+  }
+
+  .trash-weapon-name {
+    @apply text-[11.5px] font-semibold text-ink-secondary transition-colors duration-150;
+  }
+
+  .trash-weapon-slot.is-pressed .trash-weapon-name {
+    color: color-mix(in srgb, var(--ui-accent-ink) 74%, var(--ui-ink-secondary));
+  }
+
+  .trash-weapon-key {
+    @apply relative inline-grid h-[20px] min-w-[26px] place-items-center rounded-[6px] border border-dashed bg-transparent px-1.5 font-mono text-[11px] leading-none font-medium transition-[border-color,background-color,color,transform] duration-150;
+    border-color: color-mix(in srgb, var(--ui-ink) 18%, transparent);
+    color: color-mix(in srgb, var(--ui-ink-muted) 85%, transparent);
+  }
+
+  .trash-weapon-key.is-home::after {
+    content: "";
+    @apply absolute bottom-[2px] left-1/2 h-[1.5px] w-[7px] -translate-x-1/2 rounded-full bg-current opacity-45;
+  }
+
+  .trash-weapon-slot.is-pressed .trash-weapon-key {
+    transform: translateY(1px);
+    border-color: color-mix(in srgb, var(--ui-accent) 45%, transparent);
+    background-color: color-mix(in srgb, var(--ui-accent) 7%, transparent);
+    color: var(--ui-accent-ink);
+  }
+
+  @container blog-content (width < 760px) {
+    .trash-dock {
+      @apply flex-col items-center gap-2.5;
+    }
+
+    .trash-dock-hand {
+      @apply grid w-full max-w-[380px] grid-cols-4 gap-2;
+    }
+
+    .trash-dock-split {
+      @apply hidden;
+    }
+
+    .trash-weapon-slot {
+      @apply w-full;
+    }
+
+    .trash-weapon-btn {
+      @apply px-1.5 py-2;
+    }
+
+    .trash-weapon-img {
+      @apply size-[36px];
+    }
+
+    .trash-mascot-img {
+      @apply size-[210px];
+    }
+  }
+}

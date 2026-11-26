@@ -1,259 +1,377 @@
 <script setup lang="ts">
 import {
-  BookOpen,
-  Boxes,
-  Filter,
-  Grid2X2,
-  LayoutList,
-  Lightbulb,
-  Maximize2,
-  Network,
-  NotebookPen,
+  CalendarDays,
+  Clock3,
+  Eye,
+  Hash,
   Search,
   SlidersHorizontal,
-  Star,
-  Tags,
-  Clock3,
-  UserRound,
-  Wrench
+  Tag,
+  X
 } from 'lucide-vue-next'
-import { articles } from '~/data/mock'
+import { articles } from '~/utils/articles'
 
-const sidebarItems = [
-  { label: '全部内容', icon: BookOpen, active: true },
-  { label: '文章', icon: BookOpen },
-  { label: '关系', icon: Network },
-  { label: '标签', icon: Tags },
-  { label: '时间线', icon: Clock3 },
-  { label: '专题', icon: Lightbulb },
-  { label: '暂存', icon: NotebookPen }
-]
+useSeoMeta({
+  title: '文库 · kertoriy 的研发空间',
+  description: '浏览通过 Markdown 发布的全部文章、分类与标签索引。'
+})
 
-const graphClusters = [
-  {
-    title: '编辑体验',
-    count: 'Tiptap / 块结构',
-    icon: UserRound,
-    position: 'left-[44%] top-[16%]',
-    tone: 'text-sky-500 bg-sky-50'
-  },
-  {
-    title: '内容模型',
-    count: 'MongoDB / MySQL',
-    icon: Boxes,
-    position: 'left-[20%] top-[40%]',
-    tone: 'text-emerald-500 bg-emerald-50'
-  },
-  {
-    title: '发布流程',
-    count: '草稿 / 发布',
-    icon: Lightbulb,
-    position: 'left-[70%] top-[45%]',
-    tone: 'text-amber-500 bg-amber-50'
-  },
-  {
-    title: '资源管理',
-    count: 'COS / 链接库',
-    icon: Wrench,
-    position: 'left-[28%] top-[74%]',
-    tone: 'text-indigo-500 bg-indigo-50'
-  },
-  {
-    title: '安全策略',
-    count: '鉴权 / 限流',
-    icon: Star,
-    position: 'left-[67%] top-[80%]',
-    tone: 'text-rose-500 bg-rose-50'
+const route = useRoute()
+const router = useRouter()
+const baseURL = useRuntimeConfig().app.baseURL
+const { getArticleReads } = useContentMetrics()
+
+function parseQueryTags(val: unknown): string[] {
+  if (typeof val === 'string' && val.trim()) {
+    return val.split(',').map(item => item.trim()).filter(Boolean)
   }
-]
+  return []
+}
 
-const satelliteNodes = [
-  { label: 'Tiptap', position: 'left-[36%] top-[8%]', color: 'bg-sky-300' },
-  { label: '块结构', position: 'left-[58%] top-[8%]', color: 'bg-sky-300' },
-  { label: 'MongoDB', position: 'left-[10%] top-[32%]', color: 'bg-emerald-300' },
-  { label: 'MySQL', position: 'left-[8%] top-[44%]', color: 'bg-emerald-300' },
-  { label: '草稿', position: 'left-[83%] top-[33%]', color: 'bg-orange-300' },
-  { label: '发布', position: 'left-[88%] top-[43%]', color: 'bg-orange-300' },
-  { label: 'COS', position: 'left-[17%] top-[68%]', color: 'bg-indigo-300' },
-  { label: '链接库', position: 'left-[16%] top-[82%]', color: 'bg-indigo-300' },
-  { label: '鉴权', position: 'left-[82%] top-[72%]', color: 'bg-rose-300' },
-  { label: '限流', position: 'left-[75%] top-[90%]', color: 'bg-rose-300' }
-]
+const pageRef = ref<HTMLElement | null>(null)
+const searchInputRef = useTemplateRef<HTMLInputElement>('searchInputRef')
+const loadMoreSentinel = ref<HTMLElement | null>(null)
+const isToolbarStuck = ref(false)
+let scrollHost: HTMLElement | null = null
 
-const articleCards = [
-  {
-    title: '前后台一体博客的页面边界',
-    desc: '整理前台阅读态和后台编辑态的差异，避免后台变成另一套管理平台。',
-    meta: '2026-05-18 · 草稿',
-    tags: ['产品设计', '后台'],
-    tone: '#4f8df7'
-  },
-  {
-    title: '文章内容为什么放在 MongoDB',
-    desc: '文章元信息和正文分开保存，正文使用编辑器 JSON，后续更容易扩展自定义语法。',
-    meta: '2026-05-15 · 已发布',
-    tags: ['MongoDB', 'Tiptap'],
-    tone: '#8b72dc'
-  },
-  {
-    title: '单用户后台的鉴权方案',
-    desc: '管理员密码通过环境变量注入，服务端会话、HttpOnly Cookie 和 Redis 限流共同防护。',
-    meta: '2026-05-12 · 已发布',
-    tags: ['安全', 'Nuxt'],
-    tone: '#e68a79'
-  },
-  {
-    title: '文库页的图文阅读方式',
-    desc: '文库不是普通列表，需要支持图文表达、快速导览和文章关系浏览。',
-    meta: '2026-05-10 · 已发布',
-    tags: ['文库', '阅读体验'],
-    tone: '#48b7b2'
+const searchQuery = ref(typeof route.query.q === 'string' ? route.query.q : '')
+const activeCategory = ref('全部内容')
+const selectedTags = ref<string[]>(parseQueryTags(route.query.tag))
+const activeSort = ref<'latest' | 'title'>('latest')
+const filterOpen = ref(false)
+
+function focusSearchInput() {
+  searchInputRef.value?.focus()
+}
+
+function tokenizeQuery(raw: string): string[] {
+  return raw
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .map(token => token.replace(/^#+/, ''))
+    .filter(Boolean)
+}
+
+function resolveCover(cover: string) {
+  if (!cover) return `${baseURL}blog-desk.webp`
+  return /^https?:\/\//.test(cover) ? cover : `${baseURL}${cover.replace(/^\//, '')}`
+}
+
+watch(() => route.query.q, (val) => {
+  searchQuery.value = typeof val === 'string' ? val : ''
+})
+
+watch(() => route.query.tag, (val) => {
+  selectedTags.value = parseQueryTags(val)
+})
+
+function clearSearch() {
+  searchQuery.value = ''
+  if (route.query.q) {
+    const nextQuery = { ...route.query }
+    delete nextQuery.q
+    router.replace({ path: '/library', query: nextQuery })
   }
-]
+}
+
+function toggleTag(tag: string) {
+  if (selectedTags.value.includes(tag)) {
+    selectedTags.value = selectedTags.value.filter(item => item !== tag)
+  }
+  else {
+    selectedTags.value = [...selectedTags.value, tag]
+  }
+}
+
+function toggleCategory(category: string) {
+  activeCategory.value = activeCategory.value === category ? '全部内容' : category
+}
+
+function resetAllFilters() {
+  clearSearch()
+  activeCategory.value = '全部内容'
+  selectedTags.value = []
+  activeSort.value = 'latest'
+  if (route.query.tag) {
+    const nextQuery = { ...route.query }
+    delete nextQuery.tag
+    router.replace({ path: '/library', query: nextQuery })
+  }
+}
+
+const activeFilterCount = computed(() => {
+  let count = selectedTags.value.length
+  if (activeCategory.value !== '全部内容') count += 1
+  if (activeSort.value !== 'latest') count += 1
+  return count
+})
+
+const hasActiveFilter = computed(() => activeFilterCount.value > 0)
+const hasVisibleChips = computed(() => activeCategory.value !== '全部内容' || selectedTags.value.length > 0)
+
+const filteredArticles = computed(() => {
+  const tokens = tokenizeQuery(searchQuery.value)
+  const list = articles.filter((item) => {
+    const matchCategory = activeCategory.value === '全部内容' || item.category === activeCategory.value
+    const matchTags = selectedTags.value.length === 0
+      || selectedTags.value.some(tag => item.tags.includes(tag))
+    if (!matchCategory || !matchTags) return false
+    if (!tokens.length) return true
+
+    const haystack = `${item.title} ${item.summary} ${item.category} ${item.date} ${item.tags.join(' ')} ${item.body}`.toLowerCase()
+    return tokens.every(token => haystack.includes(token))
+  })
+
+  if (activeSort.value === 'title') {
+    return [...list].sort((a, b) => a.title.localeCompare(b.title, 'zh-CN'))
+  }
+  return list
+})
+
+const {
+  visibleItems: visibleArticles,
+  hasMore,
+  isLoadingMore,
+  loadMore
+} = useScrollLoad(filteredArticles, loadMoreSentinel, {
+  initialSize: 9,
+  step: 6,
+  resetKey: () => `${activeCategory.value}|${selectedTags.value.join(',')}|${searchQuery.value.trim()}|${activeSort.value}`
+})
+
+function syncToolbarStuck() {
+  if (!import.meta.client) return
+  isToolbarStuck.value = scrollHost ? scrollHost.scrollTop > 8 : window.scrollY > 8
+}
+
+function toggleFilterDrawer() {
+  filterOpen.value = !filterOpen.value
+  if (filterOpen.value && import.meta.client) {
+    if (scrollHost && scrollHost.scrollTop > 24) {
+      scrollHost.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+    else if (!scrollHost && window.scrollY > 24) {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+}
+
+function onDocumentKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape' && filterOpen.value) {
+    filterOpen.value = false
+  }
+}
+
+onMounted(() => {
+  const sheet = pageRef.value?.closest('.blog-sheet') as HTMLElement | null
+  if (sheet) {
+    const overflowY = window.getComputedStyle(sheet).overflowY
+    scrollHost = overflowY === 'auto' || overflowY === 'scroll' ? sheet : null
+  }
+  if (scrollHost) {
+    scrollHost.addEventListener('scroll', syncToolbarStuck, { passive: true })
+  }
+  window.addEventListener('scroll', syncToolbarStuck, { passive: true })
+  syncToolbarStuck()
+  window.addEventListener('keydown', onDocumentKeydown)
+})
+
+onBeforeUnmount(() => {
+  scrollHost?.removeEventListener('scroll', syncToolbarStuck)
+  if (import.meta.client) {
+    window.removeEventListener('scroll', syncToolbarStuck)
+  }
+  window.removeEventListener('keydown', onDocumentKeydown)
+})
 </script>
 
 <template>
-  <div class="grid min-h-[calc(100vh-8rem)] gap-6 xl:grid-cols-[11.5rem_1.05fr_1.1fr]">
-    <aside class="hidden rounded-[1.6rem] border border-border bg-white/72 p-4 shadow-sm xl:block">
-      <nav class="space-y-2">
+  <div ref="pageRef" class="grid w-full gap-3 py-1">
+    <!-- 吸顶搜索与筛选区：滚动时固定于内容区顶部 -->
+    <div class="library-sticky-bar" :class="{ 'is-stuck': isToolbarStuck }">
+      <!-- 单行检索栏：左侧搜索区域 + 右侧筛选按钮（展开标签蜂巢筛选面板） -->
+      <div class="relative flex items-center gap-3">
+        <div
+          class="flex h-10 flex-1 cursor-text items-center gap-2.5 rounded-full border border-border bg-surface px-4 transition-[border-color,background-color,box-shadow] duration-200 focus-within:border-border-strong focus-within:bg-canvas focus-within:shadow-[0_0_0_3px_var(--ui-hover-ring-fill),0_0_0_4px_var(--ui-hover-ring-edge)]"
+          @click="focusSearchInput"
+        >
+          <Search :size="15" :stroke-width="1.8" class="shrink-0 text-ink-muted" aria-hidden="true" />
+          <input
+            ref="searchInputRef"
+            v-model="searchQuery"
+            type="search"
+            class="library-search-input w-full min-w-0 border-0 bg-transparent text-[13.5px] leading-none text-ink outline-none placeholder:text-ink-muted"
+            placeholder="搜索文章标题、标签、正文或日期…"
+            aria-label="搜索文库文章"
+            @keydown.esc="clearSearch"
+          >
+          <button
+            v-if="searchQuery"
+            type="button"
+            class="inline-grid size-5 shrink-0 cursor-pointer place-items-center rounded-full bg-surface-hover text-ink-muted transition hover:text-ink"
+            aria-label="清空搜索"
+            @click.stop="clearSearch"
+          >
+            <X :size="12" aria-hidden="true" />
+          </button>
+        </div>
+
         <button
-          v-for="item in sidebarItems"
-          :key="item.label"
-          class="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black transition"
-          :class="item.active ? 'bg-primary/10 text-primary-strong' : 'muted hover:bg-slate-50'"
+          type="button"
+          class="inline-flex h-10 shrink-0 cursor-pointer items-center gap-2 rounded-full border px-4 text-[13px] font-medium transition-[background-color,border-color,color] duration-150"
+          :class="filterOpen || hasActiveFilter
+            ? 'border-border-strong bg-canvas text-ink'
+            : 'border-border bg-surface text-ink-secondary hover:border-border-strong hover:text-ink'"
+          :aria-expanded="filterOpen"
+          aria-label="展开标签蜂巢筛选"
+          @click="toggleFilterDrawer"
         >
-          <component :is="item.icon" :size="18" />
-          {{ item.label }}
+          <SlidersHorizontal :size="14" :stroke-width="1.8" aria-hidden="true" />
+          <span>筛选</span>
+          <span
+            v-if="hasActiveFilter"
+            class="inline-grid h-[18px] min-w-[18px] place-items-center rounded-full bg-accent px-1 font-mono text-[10.5px] font-semibold leading-none text-white tabular-nums"
+          >
+            {{ activeFilterCount }}
+          </span>
         </button>
-      </nav>
-
-      <div class="mt-24 rounded-2xl border border-border bg-white/72 p-4">
-        <div class="flex items-center gap-3">
-          <span class="icon-tile"><NotebookPen :size="20" /></span>
-          <p class="text-sm font-black">选题暂存</p>
-        </div>
-        <p class="muted mt-4 text-xs leading-6">还没整理进专题的笔记，会先挂在这里。</p>
-        <button class="mt-4 w-full rounded-xl bg-primary/10 px-3 py-2 text-sm font-bold text-primary-strong">查看记录</button>
-      </div>
-    </aside>
-
-    <section class="dashboard-card min-h-[48rem] overflow-hidden p-6">
-      <div class="mb-6 flex items-center justify-between gap-4">
-        <div>
-          <h1 class="flex items-center gap-3 text-2xl font-black">
-            文章关系
-          </h1>
-          <p class="muted mt-2 text-sm font-semibold">用图辅助导览，不替代文章目录</p>
-        </div>
-        <div class="flex gap-3">
-          <button class="rounded-xl border border-border bg-white px-4 py-2 text-sm font-bold">
-            <Network :size="16" class="mr-2 inline" />
-            重新排布
-          </button>
-          <button class="rounded-xl border border-border bg-white px-4 py-2 text-sm font-bold">
-            <Filter :size="16" class="mr-2 inline" />
-            筛选
-          </button>
-          <button class="grid size-10 place-items-center rounded-xl border border-border bg-white">
-            <Maximize2 :size="17" />
-          </button>
-        </div>
       </div>
 
-      <div class="relative h-[42rem] overflow-hidden rounded-[1.5rem] bg-[radial-gradient(circle_at_center,rgba(117,111,238,.12),transparent_18rem)]">
-        <svg class="absolute inset-0 h-full w-full" viewBox="0 0 760 700">
-          <g fill="none" stroke="#d8e2f1" stroke-dasharray="6 7" stroke-width="2">
-            <path d="M380 350 C360 230 330 170 260 110" />
-            <path d="M380 350 C250 330 210 300 150 260" />
-            <path d="M380 350 C500 310 540 280 610 255" />
-            <path d="M380 350 C310 455 260 510 220 590" />
-            <path d="M380 350 C500 470 520 555 590 620" />
-          </g>
-        </svg>
+      <!-- 已激活的分类/标签筛选条 -->
+      <div v-if="hasVisibleChips" class="flex flex-wrap items-center gap-2">
+        <span class="text-[11.5px] text-ink-muted">已筛选：</span>
 
-        <div class="absolute left-1/2 top-1/2 grid size-28 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-gradient-to-br from-blue-400 to-violet-500 text-white shadow-[0_24px_60px_rgba(91,91,222,.28)]">
-          <Network :size="44" />
-        </div>
-        <div class="absolute left-1/2 top-[58%] -translate-x-1/2 text-center">
-          <p class="text-2xl font-black">博客系统</p>
-          <p class="muted mt-1 text-sm font-bold">规划中的内容结构</p>
-        </div>
-
-        <div
-          v-for="cluster in graphClusters"
-          :key="cluster.title"
-          class="absolute -translate-x-1/2 -translate-y-1/2 text-center"
-          :class="cluster.position"
+        <button
+          v-if="activeCategory !== '全部内容'"
+          type="button"
+          class="inline-flex cursor-pointer items-center gap-1 rounded-full border border-accent/30 bg-accent-soft px-2.5 py-0.5 text-[11.5px] font-medium text-accent-ink transition hover:border-accent/55"
+          @click="activeCategory = '全部内容'"
         >
-          <div class="mx-auto grid size-20 place-items-center rounded-full shadow-lg" :class="cluster.tone">
-            <component :is="cluster.icon" :size="32" />
-          </div>
-          <p class="mt-3 text-lg font-black">{{ cluster.title }}</p>
-          <p class="muted text-sm">{{ cluster.count }}</p>
-        </div>
+          <span>分类：{{ activeCategory }}</span>
+          <X :size="11" aria-hidden="true" />
+        </button>
 
-        <div
-          v-for="node in satelliteNodes"
-          :key="node.label"
-          class="absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded-full bg-white/80 px-3 py-1.5 text-sm font-bold shadow-sm"
-          :class="node.position"
+        <button
+          v-for="tag in selectedTags"
+          :key="tag"
+          type="button"
+          class="inline-flex cursor-pointer items-center gap-1 rounded-full border border-accent/30 bg-accent-soft px-2.5 py-0.5 text-[11.5px] font-medium text-accent-ink transition hover:border-accent/55"
+          @click="toggleTag(tag)"
         >
-          <span class="size-2 rounded-full" :class="node.color" />
-          {{ node.label }}
-        </div>
-      </div>
-    </section>
+          <Hash :size="10.5" aria-hidden="true" />
+          <span>{{ tag }}</span>
+          <X :size="11" aria-hidden="true" />
+        </button>
 
-    <section class="dashboard-card p-6">
-      <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h2 class="text-2xl font-black">文章列表</h2>
-          <p class="muted mt-2 text-sm font-bold">当前展示 4 篇样稿</p>
-        </div>
-        <div class="flex gap-2">
-          <button class="grid size-10 place-items-center rounded-xl bg-primary/10 text-primary-strong">
-            <LayoutList :size="19" />
-          </button>
-          <button class="grid size-10 place-items-center rounded-xl border border-border bg-white">
-            <Grid2X2 :size="18" />
-          </button>
-          <button class="grid size-10 place-items-center rounded-xl border border-border bg-white">
-            <SlidersHorizontal :size="18" />
-          </button>
-        </div>
-      </div>
-
-      <div class="mb-5 flex gap-2 overflow-x-auto pb-1">
-        <button class="shrink-0 rounded-full bg-primary/10 px-4 py-2 text-sm font-black text-primary-strong">默认排序</button>
-        <button class="shrink-0 rounded-full bg-slate-50 px-4 py-2 text-sm font-bold muted">最新发布</button>
-        <button class="shrink-0 rounded-full bg-slate-50 px-4 py-2 text-sm font-bold muted">草稿优先</button>
-        <button class="shrink-0 rounded-full bg-slate-50 px-4 py-2 text-sm font-bold muted">关联强度</button>
-      </div>
-
-      <div class="soft-card mb-6 flex items-center gap-3 rounded-2xl px-4 py-3">
-        <Search class="muted" :size="18" />
-        <input class="w-full bg-transparent text-sm font-semibold outline-none" placeholder="搜索文章、标签、分类..." />
-      </div>
-
-      <div class="space-y-5">
-        <NuxtLink
-          v-for="card in articleCards"
-          :key="card.title"
-          to="/library/knowledge-garden"
-          class="group block rounded-[1.45rem] border border-border bg-white p-5 shadow-sm transition hover:-translate-y-0.5"
+        <button
+          type="button"
+          class="cursor-pointer border-0 bg-transparent px-1 text-[11.5px] text-ink-muted transition hover:text-ink"
+          @click="resetAllFilters"
         >
-          <div class="grid gap-5 sm:grid-cols-[5.6rem_1fr]">
-            <div class="article-thumb min-h-24" :style="{ '--tone': card.tone }" />
-            <div>
-            <h3 class="text-2xl font-black leading-tight">{{ card.title }}</h3>
-            <p class="muted mt-3 line-clamp-2 leading-7">{{ card.desc }}</p>
-            <div class="mt-5 flex flex-wrap gap-2">
-              <span v-for="tag in card.tags" :key="tag" class="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary-strong">{{ tag }}</span>
-            </div>
-            <p class="muted mt-5 text-sm font-semibold">{{ card.meta }}</p>
+          清空
+        </button>
+      </div>
+    </div>
+
+    <!-- 标签蜂巢筛选面板（点击「筛选」展开/收起，六边形直接点击即筛） -->
+    <Transition name="library-drawer">
+      <LibraryTagHoneycomb
+        v-if="filterOpen"
+        :active-category="activeCategory"
+        :selected-tags="selectedTags"
+        :active-sort="activeSort"
+        :has-active-filter="hasActiveFilter"
+        @toggle-tag="toggleTag"
+        @toggle-category="toggleCategory"
+        @update:sort="activeSort = $event"
+        @reset="resetAllFilters"
+        @close="filterOpen = false"
+      />
+    </Transition>
+
+    <!-- 自适应多列上下结构配图文章网格（支持触底滚动加载） -->
+    <section aria-label="文章列表">
+      <template v-if="filteredArticles.length">
+        <div class="grid grid-cols-[repeat(auto-fill,minmax(min(100%,290px),1fr))] gap-6">
+          <NuxtLink
+            v-for="card in visibleArticles"
+            :key="card.id"
+          :to="`/library/${card.slug}`"
+          class="ui-card-subtle article-card-hover group flex h-full flex-col overflow-hidden"
+        >
+          <!-- 内嵌圆角画框封面：悬停不放大图片，保持画面沉稳清晰 -->
+          <div class="p-2.5 pb-0">
+            <div class="relative aspect-[16/10] w-full overflow-hidden rounded-[12px] border border-border/55 bg-surface">
+              <img
+                :src="resolveCover(card.cover)"
+                :alt="card.title"
+                loading="lazy"
+                class="size-full object-cover"
+              >
             </div>
           </div>
-        </NuxtLink>
+
+          <!-- 居中悬浮分类与标签胶囊（悬停卡片时外圈逐渐闭合描边） -->
+          <div class="article-tag-pill">
+            <Tag :size="11.5" aria-hidden="true" />
+            <span class="flex items-center gap-1.5 truncate">
+              <span>{{ card.category }}</span>
+              <template v-for="tag in card.tags.slice(0, 2)" :key="tag">
+                <span class="text-border-strong" aria-hidden="true">·</span>
+                <span>{{ tag }}</span>
+              </template>
+            </span>
+          </div>
+
+          <div class="flex flex-1 flex-col px-4 pt-3 pb-4">
+            <h2 class="m-0 text-[15.5px] font-semibold leading-[1.45] tracking-[-0.015em] text-ink transition-colors duration-150 group-hover:text-accent-ink">
+              {{ card.title }}
+            </h2>
+            <p class="mt-2 line-clamp-2 text-[13px] leading-[1.68] text-ink-secondary">
+              {{ card.summary }}
+            </p>
+            <div class="mt-auto pt-4">
+              <div class="flex items-center justify-between gap-2 border-t border-dashed border-border/75 pt-3 text-[11.5px] tabular-nums text-ink-muted">
+                <span class="inline-flex items-center gap-3 whitespace-nowrap">
+                  <span class="inline-flex items-center gap-1.5">
+                    <Clock3 :size="12" class="shrink-0 opacity-80" aria-hidden="true" />
+                    <span>{{ card.readTime }}</span>
+                  </span>
+                  <span class="inline-flex items-center gap-1.5" :title="`累计阅读 ${getArticleReads(card.slug).toLocaleString()} 次`">
+                    <Eye :size="12" class="shrink-0 opacity-80" aria-hidden="true" />
+                    <span>{{ getArticleReads(card.slug).toLocaleString() }} 阅读</span>
+                  </span>
+                </span>
+                <span class="inline-flex items-center gap-1.5 whitespace-nowrap">
+                  <CalendarDays :size="12" class="shrink-0 opacity-80" aria-hidden="true" />
+                  <time :datetime="card.date">{{ card.date }}</time>
+                </span>
+              </div>
+            </div>
+          </div>
+          </NuxtLink>
+        </div>
+
+        <!-- 触底滚动加载哨兵 -->
+        <div ref="loadMoreSentinel" class="scroll-load-sentinel" aria-live="polite">
+          <span v-if="isLoadingMore" class="scroll-load-status">
+            <span class="scroll-load-spinner" aria-hidden="true" />
+            <span>正在加载更多…</span>
+          </span>
+          <button v-else-if="hasMore" type="button" class="scroll-load-trigger" @click="loadMore">
+            继续加载更多
+          </button>
+          <span v-else class="scroll-load-end">已到底部</span>
+        </div>
+      </template>
+
+      <div v-else class="py-14 text-center">
+        <p class="text-sm font-medium text-ink">没有找到匹配的文章</p>
+        <p class="mt-1 text-xs text-ink-muted">试试更换关键词或重置筛选条件。</p>
+        <button type="button" class="ui-btn mt-4" @click="resetAllFilters">
+          重置筛选
+        </button>
       </div>
     </section>
   </div>

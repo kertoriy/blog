@@ -1,0 +1,722 @@
+@reference "./main.css";
+@layer theme, base, components, utilities;
+
+/* 「关于我」沉浸式全屏章节样式：每部分独占一屏 + 巨幅背景水印 + 氛围光晕 + 差异化杂志级构图 */
+@layer components {
+  .blog-sheet:has(.about-page) {
+    scroll-behavior: smooth;
+    scroll-snap-type: y proximity;
+  }
+
+  .blog-content:has(.about-page) {
+    padding: 0;
+  }
+
+  .about-page {
+    --about-screen-h: calc(100dvh - 58px);
+    @apply relative flex w-full flex-col;
+  }
+
+  /* 每一章节至少占满一个完整视口，不硬锁 height 避免窄屏内容裁切与跳动 */
+  .about-scene {
+    min-height: var(--about-screen-h);
+    scroll-snap-align: start;
+    @apply relative flex w-full flex-col justify-center overflow-x-clip px-7 py-7 sm:px-10 sm:py-8;
+  }
+
+  /* 零占位吸顶章节目录胶囊（右上角常驻当前章节，点击展开 9 章快捷跳转） */
+  .about-sticky-toc {
+    @apply pointer-events-none sticky top-0 z-30 h-0 w-full overflow-visible;
+  }
+
+  .about-toc-inner {
+    @apply relative flex w-full justify-end px-5 pt-4;
+  }
+
+  .about-toc-trigger {
+    @apply pointer-events-auto inline-flex h-[32px] cursor-pointer items-center gap-2 rounded-full border border-border/85 px-3.5 text-xs font-medium text-ink-secondary backdrop-blur-md transition-[border-color,background-color,color] duration-150 hover:border-border-strong hover:text-ink;
+    background-color: color-mix(in srgb, var(--ui-canvas) 84%, transparent);
+    box-shadow: var(--ui-shadow-control);
+  }
+
+  .about-toc-trigger.is-open {
+    border-color: color-mix(in srgb, var(--ui-accent) 42%, var(--ui-border-strong));
+    color: var(--ui-ink);
+  }
+
+  .about-toc-dot {
+    @apply size-1.5 rounded-full bg-accent;
+  }
+
+  .about-toc-current {
+    @apply font-semibold text-ink;
+  }
+
+  .about-toc-sep {
+    @apply h-3 w-px bg-border-strong/75;
+  }
+
+  .about-toc-popover {
+    @apply pointer-events-auto absolute top-[54px] right-5 z-40 flex w-[212px] flex-col gap-0.5 rounded-[16px] border border-border bg-canvas/95 p-2 shadow-lg backdrop-blur-md;
+  }
+
+  .about-toc-item {
+    @apply flex w-full cursor-pointer items-center gap-2.5 rounded-[10px] border-0 bg-transparent px-2.5 py-1.5 text-left text-[12.5px] font-medium text-ink-secondary transition-[background-color,color] duration-150 hover:bg-surface hover:text-ink;
+  }
+
+  .about-toc-item.is-active {
+    background-color: var(--ui-accent-soft);
+    color: var(--ui-accent-ink);
+    font-weight: 600;
+  }
+
+  .about-toc-index {
+    @apply font-mono text-[11px] tabular-nums opacity-65;
+  }
+
+  .about-toc-label {
+    @apply truncate;
+  }
+
+  .about-toc-fade-enter-active,
+  .about-toc-fade-leave-active {
+    transition: opacity 150ms ease, transform 150ms ease;
+  }
+
+  .about-toc-fade-enter-from,
+  .about-toc-fade-leave-to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  .about-scene + .about-scene {
+    border-top: 1px dashed color-mix(in srgb, var(--ui-border) 75%, transparent);
+  }
+
+  /* 全幅氛围背景层：柔光 + 巨幅低透明排版水印 */
+  .about-scene-bg {
+    @apply pointer-events-none absolute inset-0 z-0 overflow-hidden;
+  }
+
+  .about-scene-watermark {
+    @apply absolute right-6 bottom-2 select-none font-sans text-[clamp(86px,13cqi,172px)] font-extrabold leading-none tracking-[0.06em] whitespace-nowrap;
+    color: color-mix(in srgb, var(--ui-ink) 3.4%, transparent);
+  }
+
+  .about-scene-aura {
+    @apply absolute rounded-full;
+  }
+
+  .about-scene-aura.is-hero {
+    @apply -right-16 top-1/2 h-[min(92dvh,720px)] w-[min(70vw,720px)] -translate-y-1/2;
+    background: radial-gradient(
+      circle at 52% 48%,
+      color-mix(in srgb, var(--ui-accent) 20%, transparent) 0%,
+      color-mix(in srgb, var(--ui-accent) 7%, transparent) 45%,
+      transparent 72%
+    );
+  }
+
+  .about-scene-aura.is-left {
+    @apply -top-24 -left-24 h-[520px] w-[520px];
+    background: radial-gradient(circle, color-mix(in srgb, var(--ui-accent) 13%, transparent) 0%, transparent 68%);
+  }
+
+  .about-scene-aura.is-right {
+    @apply -right-24 -bottom-24 h-[560px] w-[560px];
+    background: radial-gradient(circle, color-mix(in srgb, var(--ui-accent) 14%, transparent) 0%, transparent 68%);
+  }
+
+  .about-scene-aura.is-center {
+    @apply top-1/2 left-1/2 h-[min(86dvh,640px)] w-[min(86vw,680px)] -translate-x-1/2 -translate-y-1/2;
+    background: radial-gradient(circle, color-mix(in srgb, var(--ui-accent) 13%, transparent) 0%, transparent 66%);
+  }
+
+  /* 设备屏淡雅蓝图点阵肌理 */
+  .about-scene-dots {
+    @apply absolute inset-0 opacity-65;
+    background-image: radial-gradient(color-mix(in srgb, var(--ui-ink) 9%, transparent) 1px, transparent 1px);
+    background-size: 24px 24px;
+    -webkit-mask-image: radial-gradient(ellipse 75% 75% at 62% 50%, #000 35%, transparent 100%);
+    mask-image: radial-gradient(ellipse 75% 75% at 62% 50%, #000 35%, transparent 100%);
+  }
+
+  /* =========================================================
+     Scene 0：关于页沉浸开场（去背景图，自上而下居中对称排布）
+     ========================================================= */
+  .about-hero-body {
+    @apply relative z-20 mx-auto my-auto flex w-full flex-col items-center gap-4.5 text-center;
+  }
+
+  .about-hero-avatar {
+    @apply relative mb-1 inline-flex size-[88px] shrink-0 items-center justify-center rounded-full border border-dashed p-[4px];
+    border-color: color-mix(in srgb, var(--ui-accent) 48%, var(--ui-border-strong));
+    background-color: var(--ui-canvas);
+    box-shadow: 0 0 0 5px var(--ui-hover-ring-fill);
+  }
+
+  .about-hero-avatar > img {
+    @apply block size-full aspect-square rounded-full object-cover object-top;
+  }
+
+  .about-hero-seal {
+    @apply absolute -right-0.5 -bottom-0.5 inline-grid size-[24px] place-items-center overflow-hidden rounded-full border-2 border-canvas;
+  }
+
+  .about-hero-seal img {
+    @apply size-full object-cover;
+  }
+
+  .about-hero-eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full border border-border/75 px-3.5 py-1 text-xs font-medium text-ink-secondary backdrop-blur-md;
+    background-color: color-mix(in srgb, var(--ui-bar-bg) 86%, transparent);
+  }
+
+  .about-hero-eyebrow i {
+    @apply size-1.5 rounded-full bg-accent;
+  }
+
+  .about-hero-heading {
+    @apply m-0 text-[clamp(34px,4.4cqi,52px)] font-bold leading-[1.15] tracking-[-0.035em] text-ink;
+  }
+
+  .about-hero-lead {
+    @apply m-0 max-w-[46ch] text-[15px] leading-[1.82] text-ink-secondary;
+  }
+
+  /* 居中开放式数字统计行（无厚重卡片，纯细线分割） */
+  .about-hero-metrics {
+    @apply flex flex-wrap items-center justify-center gap-6 py-1.5;
+  }
+
+  .about-hero-metric {
+    @apply flex items-baseline gap-2;
+  }
+
+  .about-hero-metric + .about-hero-metric {
+    @apply border-l border-dashed border-border-strong/75 pl-6;
+  }
+
+  .about-hero-metric strong {
+    @apply font-mono text-[24px] font-bold leading-none tabular-nums text-ink;
+  }
+
+  .about-hero-metric span {
+    @apply text-xs text-ink-muted;
+  }
+
+  /* =========================================================
+     Scene 1：01 开发 の 设备（交互式研发桌面图 + 选中设备棚拍详览 + 快捷切换栏）
+     ========================================================= */
+  .about-devices-stage {
+    @apply relative my-auto flex w-full flex-col items-center gap-5;
+  }
+
+  .about-devices-header {
+    @apply flex flex-col items-center gap-2 text-center;
+  }
+
+  .about-editorial-title {
+    @apply m-0 text-[clamp(26px,3.2cqi,38px)] font-bold leading-[1.2] tracking-[-0.03em] text-ink;
+  }
+
+  .about-devices-sub {
+    @apply m-0 max-w-[56ch] text-[13.5px] leading-[1.7] text-ink-secondary;
+  }
+
+  /* 桌面主舞台：左交互桌面全览 + 右开放式设备焦点详情 */
+  .about-desk-stage {
+    @apply grid w-full items-center gap-6;
+    grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+  }
+
+  .about-desk-canvas {
+    @apply relative w-full overflow-hidden rounded-[18px] border border-border/80;
+    aspect-ratio: 1376 / 768;
+    box-shadow: var(--ui-shadow-sheet);
+  }
+
+  .about-desk-photo {
+    @apply block size-full object-cover select-none;
+    transition: filter 220ms ease;
+  }
+
+  :root[data-theme="dark"] .about-desk-photo {
+    filter: brightness(0.9) contrast(1.03);
+  }
+
+  /* 桌面设备交互热点标记 */
+  .about-desk-pin {
+    @apply absolute z-10 flex -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center border-0 bg-transparent p-1 outline-none;
+  }
+
+  .about-desk-pin:hover {
+    z-index: 25;
+  }
+
+  .about-desk-pin.is-active {
+    z-index: 30;
+  }
+
+  .about-desk-pin-dot {
+    @apply relative inline-grid size-[28px] place-items-center rounded-full border-2 border-white/95 bg-neutral-900/78 text-white backdrop-blur-sm transition-[transform,background-color,box-shadow] duration-200 ease-out;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.28);
+  }
+
+  .about-desk-pin:hover .about-desk-pin-dot {
+    transform: scale(1.1);
+    background-color: var(--ui-accent);
+  }
+
+  .about-desk-pin.is-active .about-desk-pin-dot {
+    background-color: var(--ui-accent);
+    transform: scale(1.1);
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.24);
+  }
+
+  /* 热点悬浮/选中名称标签 */
+  .about-desk-pin-label {
+    @apply pointer-events-none absolute bottom-[calc(100%+5px)] left-1/2 -translate-x-1/2 rounded-full border border-white/15 bg-neutral-950/84 px-2.5 py-0.5 text-[11px] font-medium whitespace-nowrap text-white opacity-0 shadow-md backdrop-blur-md transition-[opacity,transform] duration-150;
+    transform: translate(-50%, 3px);
+  }
+
+  .about-desk-pin.is-left .about-desk-pin-label {
+    left: -2px;
+    transform: translate(0, 3px);
+  }
+
+  .about-desk-pin.is-right .about-desk-pin-label {
+    right: -2px;
+    left: auto;
+    transform: translate(0, 3px);
+  }
+
+  .about-desk-pin:hover .about-desk-pin-label,
+  .about-desk-pin:focus-visible .about-desk-pin-label,
+  .about-desk-pin.is-active .about-desk-pin-label {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  .about-desk-pin.is-left:hover .about-desk-pin-label,
+  .about-desk-pin.is-left:focus-visible .about-desk-pin-label,
+  .about-desk-pin.is-left.is-active .about-desk-pin-label,
+  .about-desk-pin.is-right:hover .about-desk-pin-label,
+  .about-desk-pin.is-right:focus-visible .about-desk-pin-label,
+  .about-desk-pin.is-right.is-active .about-desk-pin-label {
+    transform: translate(0, 0);
+  }
+
+  /* 右侧开放式设备聚焦详览（无外边框，轻盈聚焦当前选中设备） */
+  .about-desk-inspector {
+    @apply flex min-w-0 w-full flex-col;
+  }
+
+  .about-device-spotlight {
+    @apply flex w-full flex-col gap-3;
+  }
+
+  .about-device-media {
+    @apply relative aspect-[16/9] w-full overflow-hidden rounded-[14px] bg-white;
+  }
+
+  .about-device-media img {
+    @apply size-full object-contain;
+  }
+
+  :root:not([data-theme="dark"]) .about-device-media {
+    background-color: transparent;
+  }
+
+  :root:not([data-theme="dark"]) .about-device-media img {
+    mix-blend-mode: multiply;
+  }
+
+  :root[data-theme="dark"] .about-device-media {
+    background-color: #ffffff;
+    @apply p-1.5;
+  }
+
+  :root[data-theme="dark"] .about-device-media img {
+    filter: brightness(0.96) contrast(1.02);
+  }
+
+  .about-device-body {
+    @apply flex flex-col gap-2.5 px-0.5;
+  }
+
+  .about-device-title-row {
+    @apply flex items-center justify-between gap-2;
+  }
+
+  .about-device-role {
+    @apply inline-flex shrink-0 items-center gap-1 text-[11.5px] font-medium text-ink-muted;
+  }
+
+  .about-device-name {
+    @apply m-0 text-[16.5px] font-semibold leading-snug tracking-[-0.02em] text-ink;
+  }
+
+  .about-device-desc {
+    @apply m-0 text-[13px] leading-[1.78] text-ink-secondary;
+  }
+
+  /* 切换设备过渡 */
+  .about-device-swap-enter-active,
+  .about-device-swap-leave-active {
+    transition: opacity 150ms ease, transform 150ms ease;
+  }
+
+  .about-device-swap-enter-from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  .about-device-swap-leave-to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  /* 底部：极简圆点轮播指示器 + 左右切换箭头 */
+  .about-desk-carousel {
+    @apply flex items-center justify-center gap-4 pt-1;
+  }
+
+  .about-carousel-nav {
+    @apply inline-grid size-[30px] shrink-0 cursor-pointer place-items-center rounded-full border border-border/80 text-ink-secondary transition-[border-color,background-color,color] duration-150 hover:border-border-strong hover:text-ink;
+    background-color: var(--ui-bar-bg);
+  }
+
+  .about-carousel-dots {
+    @apply inline-flex items-center gap-1;
+  }
+
+  .about-carousel-dot {
+    @apply relative inline-flex h-[24px] cursor-pointer items-center justify-center border-0 bg-transparent px-1 outline-none;
+  }
+
+  .about-carousel-dot-pill {
+    @apply block h-[7px] w-[7px] rounded-full transition-[width,background-color] duration-200 ease-out;
+    background-color: color-mix(in srgb, var(--ui-ink-muted) 38%, transparent);
+  }
+
+  .about-carousel-dot:hover .about-carousel-dot-pill {
+    background-color: color-mix(in srgb, var(--ui-accent) 62%, var(--ui-ink-muted));
+  }
+
+  .about-carousel-dot.is-active .about-carousel-dot-pill {
+    @apply w-[22px];
+    background-color: var(--ui-accent);
+  }
+
+  .about-carousel-dot-tip {
+    @apply pointer-events-none absolute bottom-[calc(100%+4px)] left-1/2 -translate-x-1/2 rounded-full border border-border/85 bg-canvas px-2 py-0.5 text-[11px] font-medium whitespace-nowrap text-ink opacity-0 shadow-sm transition-[opacity,transform] duration-150;
+    transform: translate(-50%, 3px);
+  }
+
+  .about-carousel-dot:hover .about-carousel-dot-tip,
+  .about-carousel-dot:focus-visible .about-carousel-dot-tip {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  /* =========================================================
+     Scene 2/3/4：喜欢 の 技术 / 喜欢 の 工具 / 钟爱 の 模型（上下居中对称矩阵）
+     ========================================================= */
+  .about-tech-stage {
+    @apply relative z-20 my-auto flex w-full flex-col items-center gap-7;
+  }
+
+  /* 居中弹性排布：11 项自动 4+4+3 居中，5 项自动 3+2 居中，4 项单行 4 列居中 */
+  .about-tech-grid {
+    @apply flex w-full flex-wrap items-start justify-center gap-x-6 gap-y-6;
+  }
+
+  .about-tech-item {
+    @apply flex w-[calc((100%-72px)/4)] min-w-[180px] flex-col items-center gap-2 px-2 py-1 text-center;
+  }
+
+  .about-tech-grid.is-tools .about-tech-item {
+    @apply w-[calc((100%-48px)/3)] min-w-[200px];
+  }
+
+  .about-tech-grid.is-models .about-tech-item {
+    @apply w-[calc((100%-72px)/4)] min-w-[190px];
+  }
+
+  .about-tech-logo {
+    @apply inline-grid size-[52px] shrink-0 place-items-center rounded-[14px] border border-border/80;
+    background-color: var(--ui-bar-bg);
+  }
+
+  .about-tech-logo img {
+    @apply size-[28px] object-contain;
+  }
+
+  :root[data-theme="dark"] .about-tech-logo img.is-invert-dark {
+    filter: invert(1) brightness(1.08);
+  }
+
+  .about-tech-info {
+    @apply flex min-w-0 flex-col items-center gap-0.5;
+  }
+
+  .about-tech-name {
+    @apply m-0 text-[14.5px] font-semibold leading-snug tracking-[-0.01em] text-ink;
+  }
+
+  .about-tech-note {
+    @apply m-0 max-w-[20ch] text-[12px] leading-[1.55] text-ink-secondary;
+  }
+
+  /* =========================================================
+     Scene 5：喜欢 の 游戏（单游戏横向大屏展陈，多游戏自动双列）
+     ========================================================= */
+  .about-games-grid {
+    @apply grid w-full grid-cols-2 gap-7;
+  }
+
+  .about-games-grid:has(> :only-child) {
+    @apply grid-cols-1;
+  }
+
+  .about-game-item {
+    @apply flex h-full flex-col gap-3.5;
+  }
+
+  .about-games-grid:has(> :only-child) .about-game-item {
+    @apply grid items-center gap-8;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+  }
+
+  .about-game-media {
+    @apply relative aspect-[16/9] w-full overflow-hidden rounded-[18px] bg-surface;
+    box-shadow: var(--ui-shadow-sheet);
+  }
+
+  .about-game-media img {
+    @apply size-full object-cover;
+  }
+
+  .about-games-grid:has(> :only-child) .about-device-body {
+    @apply gap-3;
+  }
+
+  .about-games-grid:has(> :only-child) .about-device-name {
+    @apply text-[22px] font-bold;
+  }
+
+  .about-games-grid:has(> :only-child) .about-device-desc {
+    @apply text-[13.5px] leading-[1.82];
+  }
+
+  /* =========================================================
+     Scene 6：性格 · INTP（左透明抠图 INTP 逻辑学家小人 + 右极简四行虚线拆解）
+     ========================================================= */
+  .about-intp-stage {
+    @apply relative z-20 my-auto grid w-full items-center gap-10;
+    grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+  }
+
+  .about-intp-mascot-wrap {
+    @apply relative flex items-center justify-center;
+  }
+
+  .about-intp-mascot {
+    @apply h-[clamp(290px,42dvh,370px)] w-auto select-none object-contain;
+    filter: drop-shadow(0 18px 28px color-mix(in srgb, var(--ui-accent) 16%, transparent));
+  }
+
+  .about-intp-content {
+    @apply flex min-w-0 flex-col gap-4;
+  }
+
+  .about-intp-title-row {
+    @apply flex flex-wrap items-center gap-3;
+  }
+
+  .about-mbti-big {
+    @apply m-0 font-mono text-[clamp(48px,5.6cqi,72px)] font-extrabold leading-[0.95] tracking-[-0.04em];
+    background: linear-gradient(135deg, var(--ui-ink) 18%, var(--ui-accent) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .about-mbti-archetype {
+    @apply inline-flex items-center gap-2 rounded-full px-3.5 py-1 text-xs font-semibold text-accent-ink;
+    background-color: var(--ui-accent-soft);
+  }
+
+  .about-intp-summary {
+    @apply m-0 text-[13.5px] leading-[1.72] text-ink-secondary;
+  }
+
+  .about-intp-list {
+    @apply m-0 mt-1 flex list-none flex-col p-0;
+  }
+
+  .about-intp-row {
+    @apply flex items-center gap-3.5 border-t border-dashed border-border py-3.5;
+  }
+
+  .about-intp-row:last-child {
+    @apply border-b border-dashed border-border;
+  }
+
+  .about-intp-letter {
+    @apply inline-grid size-[28px] shrink-0 place-items-center rounded-[8px] border border-dashed font-mono text-[13px] font-bold text-accent-ink;
+    border-color: color-mix(in srgb, var(--ui-accent) 42%, transparent);
+    background-color: var(--ui-accent-soft);
+  }
+
+  .about-intp-title {
+    @apply shrink-0 text-[13.5px] font-semibold text-ink;
+  }
+
+  .about-intp-desc {
+    @apply min-w-0 flex-1 text-[12.5px] leading-[1.6] text-ink-secondary;
+  }
+
+  /* =========================================================
+     Scene 7：成就 & 未来（极简居中「咸鱼中」）
+     ========================================================= */
+  .about-chill-stage {
+    @apply relative z-20 my-auto flex w-full flex-col items-center gap-4 text-center;
+  }
+
+  .about-chill-title {
+    @apply m-0 text-[clamp(44px,5.8cqi,72px)] font-bold leading-[1.12] tracking-[0.04em] text-ink;
+  }
+
+  .about-chill-sub {
+    @apply m-0 max-w-[44ch] text-[14.5px] leading-[1.8] text-ink-secondary;
+  }
+
+  /* =========================================================
+     Scene 8：联系方式（无卡片纯开放 5 项居中横排，点击即复制）
+     ========================================================= */
+  .about-finale-stage {
+    @apply relative z-20 my-auto flex w-full flex-col items-center gap-8 text-center;
+  }
+
+  .about-finale-heading {
+    @apply m-0 text-[clamp(28px,3.6cqi,42px)] font-bold leading-[1.2] tracking-[-0.03em] text-ink;
+  }
+
+  .about-finale-desc {
+    @apply m-0 max-w-[48ch] text-[14px] leading-[1.78] text-ink-secondary;
+  }
+
+  .about-contact-row {
+    @apply flex w-full flex-wrap items-start justify-center gap-x-6 gap-y-6 border-y border-dashed border-border-strong/65 py-7;
+  }
+
+  .about-contact-item {
+    @apply flex min-w-[155px] flex-1 cursor-pointer flex-col items-center gap-1.5 border-0 bg-transparent px-2 py-1 text-center outline-none;
+  }
+
+  .about-contact-icon {
+    @apply mb-1 inline-grid size-[52px] place-items-center rounded-[14px] border border-border/80 text-ink-secondary transition-[border-color,background-color] duration-150;
+    background-color: var(--ui-bar-bg);
+  }
+
+  .about-contact-item:hover .about-contact-icon,
+  .about-contact-item.is-copied .about-contact-icon {
+    border-color: color-mix(in srgb, var(--ui-accent) 40%, var(--ui-border-strong));
+    background-color: var(--ui-canvas);
+  }
+
+  .about-contact-icon img {
+    @apply size-[26px] object-contain;
+  }
+
+  :root[data-theme="dark"] .about-contact-icon img.is-invert-dark {
+    filter: invert(1) brightness(1.08);
+  }
+
+  .about-contact-name {
+    @apply text-[14px] font-semibold text-ink;
+  }
+
+  .about-contact-handle {
+    @apply font-mono text-[12.5px] text-ink-secondary break-all;
+  }
+
+  .about-contact-state {
+    @apply mt-0.5 inline-flex items-center gap-1 text-[11px] font-medium text-ink-muted transition-colors duration-150;
+  }
+
+  .about-contact-item:hover .about-contact-state,
+  .about-contact-item.is-copied .about-contact-state {
+    color: var(--ui-accent-ink);
+  }
+
+  /* 响应式适配：桌面端收起/展开侧栏不触发列数突变，仅真正窄屏时平滑回落 */
+  @media (width < 52rem) {
+    .blog-sheet:has(.about-page) {
+      scroll-snap-type: none;
+    }
+
+    .about-sticky-toc {
+      top: 52px;
+    }
+
+    .about-scene {
+      min-height: auto;
+      @apply gap-6 px-4 py-9;
+    }
+  }
+
+  @container blog-content (width < 840px) {
+    .about-desk-stage {
+      grid-template-columns: 1fr;
+    }
+
+    .about-device-spotlight {
+      @apply grid items-center gap-4;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    }
+  }
+
+  @container blog-content (width < 760px) {
+    .about-intp-stage,
+    .about-games-grid:has(> :only-child) .about-game-item {
+      grid-template-columns: 1fr;
+    }
+
+    .about-intp-mascot {
+      @apply h-[240px];
+    }
+
+    .about-tech-item,
+    .about-tech-grid.is-tools .about-tech-item,
+    .about-tech-grid.is-models .about-tech-item {
+      @apply w-[calc((100%-24px)/2)];
+    }
+  }
+
+  @container blog-content (width < 560px) {
+    .about-device-spotlight {
+      grid-template-columns: 1fr;
+    }
+
+    .about-desk-pin-dot {
+      @apply size-[24px];
+    }
+
+    .about-games-grid {
+      @apply grid-cols-1;
+    }
+
+    .about-intp-row {
+      @apply flex-wrap;
+    }
+
+    .about-tech-item,
+    .about-tech-grid.is-tools .about-tech-item,
+    .about-tech-grid.is-models .about-tech-item {
+      @apply w-full;
+    }
+  }
+}

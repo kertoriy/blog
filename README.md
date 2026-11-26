@@ -1,581 +1,336 @@
-# Ker Edit Blog
-
-一个基于 Nuxt 与 Vue 3 的个人博客项目。项目定位是个人内容发布、资料沉淀、常用资源整理与轻量后台管理。
-
-当前阶段先确定产品与技术方案，暂不进入功能代码实现。
-
-## 产品定位
-
-本项目不是单纯的内容展示型博客，而是一个前后台一体的个人博客知识库系统。
-
-前台面向公开访问者，提供稳定、清晰、适合阅读和浏览的博客体验。后台面向站点作者，保留接近前台的页面形态，但页面内容可以直接编辑。目标是让作者在接近真实发布效果的界面中完成内容创作、知识组织和内容管理。
-
-核心体验参考飞书文档、语雀等在线文档产品：
-
-- 在线编辑
-- 实时渲染
-- 所见即所得
-- 块级内容组织
-- 内容与知识关系可视化
-
-## 技术栈
-
-- Nuxt 4
-- Vue 3
-- TypeScript
-- Tailwind CSS
-- lucide-vue-next
-- Vue Flow
-- Tiptap
-- MySQL
-- MongoDB
-- Redis
-- pnpm
-
-## 设计原则
-
-- 不引入现成 UI 组件框架，界面和组件按项目需求自行设计。
-- 使用 Tailwind CSS 作为主要样式方案。
-- 使用 lucide-vue-next 作为主要图标库。
-- 前台页面优先保证阅读体验、导航效率和内容可维护性。
-- 后台页面优先保证内容编辑、知识组织和发布流程清晰。
-- 后台不是传统管理平台，而是前台页面的可编辑模式。前台和后台的界面差距应尽量小，后台只是在前台阅读体验上增加编辑、发布、关系维护等能力。
-- 前后台 UI 颜值和完成度必须保持同一标准，不能因为进入后台模块就降低视觉质量。
-- 功能设计先简单可用，再逐步增强。
-
-## 视觉设计规范
-
-整体视觉方向是软现代化、舒适、轻盈、有个人气质。界面应避免冰冷的企业后台感，也避免过度装饰导致阅读和编辑效率下降。
-
-设计关键词：
-
-- 柔和
-- 现代
-- 舒适
-- 清透
-- 有氛围感
-- 适合长时间阅读和编辑
-
-### 主题系统
-
-项目支持双主题切换。
-
-#### 蓝粉二次元主题
-
-适合更轻快、活泼、可爱的博客氛围。
-
-建议方向：
-
-- 主色：柔和蓝色
-- 辅色：浅粉色
-- 背景：清透浅色背景
-- 强调：适度使用渐变、半透明、柔和边框
-- 氛围：二次元、轻盈、灵动，但不影响阅读
-
-#### 紫色淡雅古风主题
-
-适合更安静、雅致、有东方感的博客氛围。
-
-建议方向：
-
-- 主色：淡紫色
-- 辅色：灰紫、浅墨、低饱和暖色
-- 背景：淡雅浅色背景
-- 强调：细线、留白、轻纹理感
-- 氛围：古风、含蓄、安静，但保持现代产品可用性
-
-主题切换应影响：
-
-- 颜色变量
-- 背景
-- 边框
-- 按钮
-- 链接
-- 卡片
-- 编辑器高亮
-- 知识关系图节点和连线
-
-前台和后台必须共用同一套视觉语言。后台可以增加编辑工具栏、浮层、状态提示和操作控件，但这些控件也要符合主题审美，不能变成传统后台风格或临时拼装界面。
-
-## 页面模块
-
-### 1. 首页
-
-首页作为个人博客的入口，重点展示内容首页、站点状态和最近更新，不做常用入口、推荐文章、最近归档等分散注意力的模块。
-
-确定包含：
-
-- 文章内容首页
-- 站内统计
-- 广告屏
-- 最近文章
-- 简洁搜索入口
-
-### 2. 文库
-
-文库用于以图文结合的方式表达文章、笔记、教程、读书记录和技术整理等长期内容。它不是简单列表页，而是博客知识库的主要浏览和阅读入口。
-
-确定包含：
-
-- 图文文章卡片
-- 分类筛选
-- 标签筛选
-- 关键字搜索
-- 左展开或右展开的文章阅读区
-- 快速导览到指定文章
-- 文章详情阅读
-- 目录导航
-- 阅读时间、发布时间、更新时间
-- 草稿和发布状态，仅后台可见
-
-文库交互方向：
-
-- 默认以图 + 文方式展示文章摘要。
-- 点击文章后，可以在当前页面左侧或右侧展开阅读区。
-- 展开阅读区后，仍保留文章列表或导览能力，方便快速切换文章。
-- 支持直接进入文章详情页阅读。
-- 后台模式下，同一套界面增加编辑、发布、关系维护等能力。
-
-### 3. 常用网站
-
-常用网站用于整理个人高频使用的工具、资源和链接，并作为个人资源导航。
-
-建议包含：
-
-- 网站卡片列表
-- 分类分组，例如开发、设计、效率、学习、工具
-- 标题、描述、链接、图标
-- 访问跳转
-- 后台维护入口
-- 后台配置交流群信息
-- 后台配置联系方式
-- 后台配置站点说明和资源分组
-
-### 4. 归档
-
-归档用于按时间组织历史内容，方便回看。
-
-建议包含：
-
-- 按年份和月份聚合文章
-- 时间线视图
-- 每月文章数量统计
-- 文章标题、发布时间、分类信息
-
-### 5. 友链
-
-友链用于展示朋友、同类博客或推荐站点。
-
-建议包含：
-
-- 友链列表
-- 站点名称
-- 站点描述
-- 头像或站点图标
-- 链接地址
-- 友链申请说明，后续可扩展为表单
-
-### 6. 后台
-
-后台用于管理博客内容和站点配置。
-
-建议第一阶段包含：
-
-- 登录
-- 文章管理
-- 所见即所得文章编辑
-- 文章关系管理
-- 知识图谱视图
-- 分类管理
-- 标签管理
-- 常用网站管理
-- 友链管理
-- 站点基础配置
-
-后续可扩展：
-
-- 图片上传
-- 草稿预览
-- 发布记录
-- 访问统计
-
-### 7. 知识关系图
-
-知识关系图用于展示文章、专题、标签、知识系列之间的关联关系，帮助形成个人知识体系。
-
-建议使用 Vue Flow 渲染：
-
-- 文章节点
-- 专题节点
-- 标签节点
-- 系列节点
-- 引用关系
-- 前置知识关系
-- 延伸阅读关系
-- 手动拖拽整理
-- 后台编辑关系
-- 前台公开展示只读知识关系图
-
-### 8. 关于
-
-关于页面用于介绍站点作者、博客理念、技术栈和个人知识库建设目标。
-
-建议包含：
-
-- 作者介绍
-- 博客创建初衷
-- 技术栈说明
-- 个人知识库建设方向
-- 联系方式
-- 版权或转载说明
-
-## 建议路由规划
+<div align="center">
+
+<img src="./public/logo.svg" alt="Kertoriy Logo" width="76" height="76" />
+
+<h1>kertoriy 的研发空间</h1>
+
+<p>
+  <strong>基于 Nuxt 4 · Vue 3 · Tailwind CSS v4 打造的零 UI 框架个人博客与知识庭院</strong>
+</p>
+
+<p>
+  清透双主题 · 本地 Markdown / JSON 文件驱动 · Chart.js 数据看板 · 180 FPS Canvas 赛博情绪垃圾桶 · 静态预渲染零运维部署
+</p>
+
+<p>
+  <img src="https://img.shields.io/badge/Nuxt-4.4.5-00DC82?style=flat-square&logo=nuxt&logoColor=white" alt="Nuxt 4.4.5" />
+  <img src="https://img.shields.io/badge/Vue-3.5.34-4FC08D?style=flat-square&logo=vue.js&logoColor=white" alt="Vue 3.5.34" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-4.3.0-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4.3" />
+  <img src="https://img.shields.io/badge/TypeScript-Strict-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Chart.js-4.6.1-FF6384?style=flat-square&logo=chart.js&logoColor=white" alt="Chart.js 4.6.1" />
+  <img src="https://img.shields.io/badge/Lucide_Vue-1.0.0-F56565?style=flat-square&logo=lucide&logoColor=white" alt="Lucide Vue" />
+  <img src="https://img.shields.io/badge/Caddy-2_Alpine-1F88C0?style=flat-square&logo=caddy&logoColor=white" alt="Caddy 2" />
+  <img src="https://img.shields.io/badge/License-MIT-8238F5?style=flat-square" alt="MIT License" />
+</p>
+
+<p>
+  <a href="#-核心界面预览">界面预览</a> ·
+  <a href="#-核心特性">核心特性</a> ·
+  <a href="#-页面与路由">页面路由</a> ·
+  <a href="#-内容维护指南">内容维护</a> ·
+  <a href="#-快速开始">快速开始</a> ·
+  <a href="#-部署指南">部署指南</a>
+</p>
+
+<br />
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./docs/preview/home-dark.png" />
+  <source media="(prefers-color-scheme: light)" srcset="./docs/preview/home-light.png" />
+  <img src="./docs/preview/home-light.png" alt="kertoriy 的研发空间 首页预览" width="100%" />
+</picture>
+
+</div>
+
+---
+
+## ✨ 核心特性
+
+- **零第三方 UI 框架**：不引入 Element Plus / Naive UI / Ant Design 等组件库，全部界面基于 **Tailwind CSS v4** 与语义化 CSS 变量手工打磨，轻盈克制、无企业后台感。
+- **亮 / 暗双主题系统**：完整覆盖亮色清透风与 Kiro 风格暗色紫调（`#9147ff`），包括侧栏、外置 1:1 自定义滚动条、图表配色、代码与阅读器过渡。
+- **全本地文件驱动**：零数据库、零 Docker、零 `.env` 即可运行；文章（`.md`）、碎碎念（`.txt`）、常用网站 / 友链 / 关于配置（`.json`）均集中在 `app/content/`，改文件即自动刷新与静态预渲染。
+- **多维站点数据看板**：首页内置 3×2 实时统计卡片（访问、字数、运行时间、文库、碎碎念、友链）与三列 **Chart.js** 交互图表（近七日访问趋势、碎碎念标签/时间分布、文库/友链/字数分布），并联动真实 `package.json` 技术栈与版本墙。
+- **沉浸式文章阅读体验**：全幅暗幕封面 + 柔和弧形画布衔接、内置 Web Speech API 语音朗读波形胶囊、灰圆中文序号（一、二、三）正文排版、吸顶悬浮目录，文末提供 **一键导出 Markdown（`.md`）** 与 **喜欢 / 报错** 轻互动反馈。
+- **180 FPS 赛博情绪垃圾桶**：独立创意互动模块，采用 **Q 版呆傻小猪绕脖挂牌 + 8 键标准指法（`ASDF JKL;`）透明虚线键帽 + 单层 HiDPI Canvas 渲染引擎 + 复用 Web Audio「啪啪啪」拍打声总线**，双手极速狂按连击依然丝滑稳帧不卡顿。
+- **交互式研发桌搭展示**：关于页提供 9 件真实硬件的桌面热区标注、纯净文字设备聚光灯与极简圆点轮播切换。
+
+---
+
+## 🖼️ 核心界面预览
+
+### 1. 首页欢迎屏（亮色 / 暗色双主题对比）
+
+全幅透明立绘叠加极淡水印与柔和紫晕，搭配实时运行时间状态胶囊、顶栏 FPS / 内存遥测与外置自定义滚动条。
+
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <img src="./docs/preview/home-light.png" alt="首页亮色模式" />
+      <br />
+      <sub><strong>亮色模式</strong> · 清透柔和纸感画布</sub>
+    </td>
+    <td width="50%" align="center">
+      <img src="./docs/preview/home-dark.png" alt="首页暗色模式" />
+      <br />
+      <sub><strong>暗色模式</strong> · 深邃暗紫与标志紫强调</sub>
+    </td>
+  </tr>
+</table>
+
+### 2. 站点统计看板、最近文章与技术栈版本墙
+
+3×2 统计卡片与三列 Chart.js 交互分布图同轴对齐；文章卡片悬浮呈现对称渐进闭合描边；底部自动读取 `package.json` 展示本站技术栈与真实版本号。
+
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <img src="./docs/preview/home-stats.png" alt="首页站点统计与三列分布图" />
+      <br />
+      <sub><strong>站点统计</strong> · 3×2 KPI 指标 + 三列 Chart.js 分布图</sub>
+    </td>
+    <td width="50%" align="center">
+      <img src="./docs/preview/home-stack.png" alt="最近文章与本站技术栈版本" />
+      <br />
+      <sub><strong>最近文章 & 技术栈</strong> · 对称闭合标签描边 + 官方品牌图标</sub>
+    </td>
+  </tr>
+</table>
+
+### 3. 文库与沉浸式文章阅读器
+
+文库支持实时关键字检索、标签筛选与阅读量持久化累计；文章正文采用全幅氛围封面与灰圆中文序号排版，文末集成 **下载文章（`.md`）**、**喜欢**、**报错** 与上下篇导览。
+
+<table>
+  <tr>
+    <td colspan="2" align="center">
+      <img src="./docs/preview/library.png" alt="文库文章列表" />
+      <br />
+      <sub><strong>文库列表</strong> · 图文卡片网格 + 单层边框对称闭合紫框标签 + 实时阅读计数</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <img src="./docs/preview/article-hero.png" alt="文章详情页头图与正文" />
+      <br />
+      <sub><strong>文章封面与正文</strong> · 语音朗读胶囊 + 吸顶目录 + 灰圆中文序号</sub>
+    </td>
+    <td width="50%" align="center">
+      <img src="./docs/preview/article-footer.png" alt="文章底部作者与轻互动卡片" />
+      <br />
+      <sub><strong>文末作者卡片</strong> · Markdown 一键下载 + 喜欢 / 报错轻互动 + 上下篇导览</sub>
+    </td>
+  </tr>
+</table>
+
+### 4. 赛博情绪垃圾桶（180 FPS Canvas · 标准指法解压）
+
+右上角可随时唤出 IP 下方独立胶囊编辑台实时同步挂牌对象；支持双手按键盘标准基准键位 **`A S D F` / `J K L ;`** 极速盲打抛掷 8 种情绪道具，单层 Canvas + 布局坐标缓存 + Web Audio 滤波总线保证狂按稳帧。
+
+<div align="center">
+  <img src="./docs/preview/trash.png" alt="赛博情绪垃圾桶" width="92%" />
+  <br />
+  <sub><strong>赛博情绪垃圾桶</strong> · Q 版呆傻小猪绕脖牌 · 8 键 <code>ASDF JKL;</code> 虚线键帽 · 常驻 <code>COMBO</code> · 180 FPS Canvas 特效</sub>
+</div>
+
+### 5. 关于页 ·「开发 の 设备」交互式研发桌搭
+
+点击桌面实景中的 9 个硬件热区或下方极简圆点，即可切换查看主力笔电、白色全塔工作站、双 2K 显示器、外设与影音设备配置。
+
+<div align="center">
+  <img src="./docs/preview/about-desk.png" alt="关于页交互式研发桌搭" width="92%" />
+  <br />
+  <sub><strong>开发 の 设备</strong> · 9 处硬件交互热区 + 纯净文字聚光灯 + 极简分页圆点</sub>
+</div>
+
+### 6. 常用网站 · 友链 · 碎碎念 · 归档
+
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <img src="./docs/preview/sites.png" alt="常用网站" />
+      <br />
+      <sub><strong>常用网站</strong> · 分组导航 + 实时访问次数统计</sub>
+    </td>
+    <td width="50%" align="center">
+      <img src="./docs/preview/friends.png" alt="友链与申请" />
+      <br />
+      <sub><strong>友链</strong> · 极简无边框友链申请 + 两步预览生成 JSON + 交流群二维码</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <img src="./docs/preview/notes.png" alt="碎碎念" />
+      <br />
+      <sub><strong>碎碎念</strong> · 纯文本文件驱动时间流 + 分类水印卡片</sub>
+    </td>
+    <td width="50%" align="center">
+      <img src="./docs/preview/archive.png" alt="文章归档" />
+      <br />
+      <sub><strong>归档</strong> · 按年份与月份自动聚合的时间线清单</sub>
+    </td>
+  </tr>
+</table>
+
+---
+
+## 🗺️ 页面与路由
+
+| 路由 | 模块 | 核心功能 |
+| :--- | :--- | :--- |
+| `/` | 首页 | 全幅刻晴欢迎屏、实时运行时间、3×2 站点统计、三列 Chart.js 分布图、最近文章、技术栈版本墙 |
+| `/library` | 文库 | 图文文章卡片、标题/标签/正文搜索、分类筛选、单层闭合描边标签动效、阅读量统计 |
+| `/library/[slug]` | 文章详情 | 暗幕封面头图、Web Speech 语音朗读、吸顶目录、中文序号正文、Markdown 下载、喜欢/报错轻互动 |
+| `/notes` | 碎碎念 | 按 `YYYY-MM-DD-标签.txt` 自动解析的短记流，支持按标签筛选与渐进加载 |
+| `/archive` | 归档 | 按年份聚合文章时间线与总字数统计 |
+| `/sites` | 常用网站 | 分组工具导航、矢量品牌图标、点击自动累加并持久化访问次数 |
+| `/friends` | 友链 | 友链卡片分组、一键复制站点头像/信息/JSON、两步式友链申请预览弹窗、交流群二维码 |
+| `/trash` | 赛博情绪垃圾桶 | Q 版小猪绕脖挂牌、独立实时编辑台、`ASDF JKL;` 8 键盲打抛掷、180 FPS Canvas 特效与统一拍打音效 |
+| `/about` | 关于 | 个人档案、9 件真实研发桌搭交互展示、常用技术栈、喜欢的游戏与多渠道联系方式 |
+
+---
+
+## 🛠️ 技术栈
+
+| 分类 | 技术 / 依赖 | 版本 | 用途 |
+| :--- | :--- | :---: | :--- |
+| 应用框架 | **Nuxt** | `4.4.5` | 全栈目录约定、自动导入与静态预渲染 |
+| 视图层 | **Vue** | `3.5.34` | Composition API、`<script setup>` 响应式界面 |
+| 路由 | **Vue Router** | `5.0.6` | 页面导航与动态文章路由 |
+| 样式引擎 | **Tailwind CSS** | `4.3.0` | 原子化样式 + `@theme` 亮/暗语义变量 |
+| 构建工具 | **Vite / Nitro** | `7.3` / `2.13` | 极速热更新与静态产物生成 |
+| 数据可视化 | **Chart.js** | `4.6.1` | 折线趋势图、环形分布图与柱状时间分布图 |
+| 图标库 | **lucide-vue-next** | `1.0.0` | 全站统一线条矢量图标 |
+| 扩展能力预留 | **Vue Flow / Tiptap** | `1.48` / `3.23` | 知识关系图谱与所见即所得编辑器演进依赖 |
+
+---
+
+## 📁 目录结构
 
 ```txt
-/                    首页
-/library             文库
-/library/[slug]      文章详情
-/sites               常用网站
-/archive             归档
-/friends             友链
-/about               关于
-/admin               后台首页
-/admin/login         后台登录
-/admin/posts         文章管理
-/admin/posts/[id]    文章编辑
-/admin/categories    分类管理
-/admin/tags          标签管理
-/admin/sites         常用网站管理
-/admin/friends       友链管理
-/admin/graph         知识关系图
-/admin/settings      站点配置
+ker-edit-blog/
+├── app/
+│   ├── assets/css/          # 按模块拆分的 Tailwind CSS v4 样式表
+│   ├── components/          # 侧栏、首页统计图表、文章阅读器、标签蜂巢等组件
+│   ├── composables/         # 主题切换、站点/文章/网站计数、FPS/内存遥测、滚动加载
+│   ├── content/             # 全站内容数据源（改动即生效，无需改组件代码）
+│   │   ├── articles/*.md    #   Markdown 文章正文与 YAML Frontmatter
+│   │   ├── notes/*.txt      #   碎碎念纯文本（命名格式：YYYY-MM-DD-标签.txt）
+│   │   ├── site.json        #   站点名称、域名、头像、运行起点与备案配置
+│   │   ├── sites.json       #   常用网站分组与站点清单
+│   │   ├── friends.json     #   友链列表与分组
+│   │   └── about.json       #   关于页档案、研发桌搭设备、技术栈、游戏与联系方式
+│   ├── layouts/default.vue  # 桌面侧栏 + 顶栏面包屑 + 外置自定义滚动条 + 移动抽屉
+│   ├── pages/               # 所有前台页面路由
+│   └── utils/               # Markdown 解析器、文章索引与内容加载工具
+├── docs/preview/            # README 界面展示高清截图
+├── public/                  # 封面图、立绘、桌搭设备图、品牌 SVG 图标、情绪道具 PNG
+├── server/api/              # 服务端健康检查与后续后台 API 预留目录
+├── Dockerfile               # Node 22 静态预渲染 + Caddy 2 Alpine 多阶段构建
+├── Caddyfile                # Caddy 2 静态托管、缓存策略、Zstd/Gzip 与自动 HTTPS 配置
+├── docker-compose.yml       # 一键 Caddy 容器编排（含证书持久化卷与健康检查）
+├── .env.example             # Docker + Caddy 部署环境变量模板
+├── LICENSE                  # MIT 开源协议
+└── .github/workflows/       # GitHub Pages 自动静态构建与发布工作流
 ```
 
-## 存储方案
+---
 
-项目采用 MySQL、MongoDB、Redis 混合存储。
+## 📝 内容维护指南
 
-### MySQL
+站点所有展示内容均由 `app/content/` 下的纯文件维护，由 `app/utils/content.ts` 与 `app/utils/articles.ts` 统一自动扫描加载：
 
-MySQL 用于保存结构化、关系明确、需要稳定查询的数据。
+- **新增文章**：在 `app/content/articles/` 下新建 `your-slug.md`，顶部编写 Frontmatter 即可自动出现在首页、文库、归档与静态预渲染路由中：
+  ```markdown
+  ---
+  title: 文章标题
+  slug: your-slug
+  date: 2026-05-18
+  category: 工程实践
+  tags: [Nuxt, Vue]
+  cover: covers/your-cover.jpg
+  summary: 一句话摘要说明。
+  ---
 
-建议保存：
+  ## 正文二级标题
 
-- 文章基础元信息
-- 分类
-- 标签
-- 专题或系列
-- 文章发布状态
-- 常用网站
-- 友链
-- 站点配置
-- 知识关系边
-- 统计数据的长期落库结果
+  正文内容……
+  ```
+- **新增碎碎念**：在 `app/content/notes/` 下新建 `YYYY-MM-DD-标签.txt`（支持标签：`随想`、`折腾`、`灵感`、`日常`，同日多条可追加 `-2` 序号），正文直接写纯文本，空行自动分段。
+- **更新导航 / 友链 / 关于 / 站点配置**：分别编辑 `sites.json`、`friends.json`、`about.json`、`site.json`。
 
-### MongoDB
+---
 
-MongoDB 用于保存文章内容主体，尤其适合所见即所得编辑器产生的结构化文档内容。
+## 🚀 快速开始
 
-建议保存：
-
-- 文章正文块数据
-- 编辑器文档 JSON
-- 页面块结构
-- 草稿内容
-- 历史版本快照
-- 富文本扩展数据
-
-文章元信息放在 MySQL，正文内容放在 MongoDB。两者通过 `articleId` 关联。
-
-### Redis
-
-Redis 用于缓存、临时状态和高频统计。
-
-建议保存：
-
-- 阅读量临时计数
-- 点赞或访问频率计数
-- 文章预设反馈临时计数
-- 热门文章缓存
-- 后台会话或 token 黑名单
-- 编辑中的短期状态
-- 防重复提交和限流数据
-
-内部统计数据采用 Redis + MySQL：Redis 承接实时写入和计数，MySQL 保存聚合后的长期统计数据。
-
-## 后台鉴权方案
-
-后台鉴权是指：系统如何确认当前访问后台的人是站点管理员，并限制非管理员访问后台页面和接口。
-
-本项目是个人博客系统，后台主要给站点作者本人使用，建议采用单用户管理员登录方案。管理员密码通过环境变量注入，不存入 MySQL。
-
-推荐设计：
-
-- 使用 Nuxt server API 处理登录、退出和当前用户校验。
-- 管理员密码从服务端环境变量读取，例如 `ADMIN_PASSWORD_HASH`。
-- 环境变量中优先保存密码哈希，不保存明文密码。
-- 如果为了本地开发临时使用明文环境变量，也只能用于开发环境，生产环境必须使用哈希。
-- 登录成功后创建服务端会话。
-- 浏览器通过 HttpOnly Cookie 保存会话标识，前端 JavaScript 不能直接读取该 Cookie。
-- Redis 用于保存会话、登录失败次数、IP 限流和后台操作防重复提交数据。
-- 后台页面通过 Nuxt middleware 判断登录状态。
-- 后台接口在 server API 层统一校验管理员身份。
-- Cookie 设置 `HttpOnly`、`Secure`、`SameSite=Lax` 或 `Strict`。
-- 后台登录接口需要做失败次数限制，防止暴力猜密码。
-- 后台接口需要做 CSRF 防护或同源校验。
-- 管理后台路径不作为主要安全手段，真正的安全边界必须是服务端鉴权。
-- 对登录接口、图片上传接口、内容写入接口做频率限制。
-- 对连续失败登录进行短期封禁。
-- 上传文件需要校验类型、大小、扩展名和 MIME，避免恶意文件上传。
-- 所有后台写操作记录审计日志，便于发现异常操作。
-
-第一阶段不需要复杂 RBAC 权限系统。后续如果后台需要多人协作，再扩展角色和权限。
-
-安全边界：
-
-- 工程上不存在“绝对安全”，目标是通过分层防护降低后台被爆破、越权和恶意写入的风险。
-- 不在前端代码里暴露管理员密码。
-- 不把管理员密码或哈希提交到仓库。
-- 不依赖前端路由隐藏后台。
-- 所有写操作接口都必须在服务端校验登录态。
-- 生产环境必须使用 HTTPS。
-
-## 已确认功能决策
-
-- 内容存储采用 MySQL + MongoDB。
-- 内部统计采用 Redis + MySQL。
-- 后台主要给个人使用。
-- 管理员密码通过环境变量注入，不存储在数据库。
-- 后台不是传统管理平台，而是前台页面的可编辑模式。
-- 前后台 UI 颜值一致，后台不能做成视觉降级版。
-- 首页包含文章内容首页、站内统计、广告屏和最近文章。
-- 首页不需要常用入口、推荐文章和最近归档。
-- 文库使用图文表达，支持左展开或右展开阅读区，并支持快速导览到文章。
-- 常用网站用于整理高频工具、资源和链接，后台可配置交流群和联系方式。
-- 不做评论系统，但文章支持预设反馈按钮，提供轻互动感。
-- 需要全文搜索，第一阶段使用数据库基础能力，后续再考虑专门搜索引擎。
-- RSS 暂不实现。
-- 不需要站点地图。
-- 图片上传使用腾讯云 COS 对象存储。
-- 部署不是静态站点，需要服务端运行环境。
-- 所见即所得编辑器内核使用 Tiptap，后续需要支持自定义语法扩展。
-- 知识关系图需要在前台公开展示。
-- 需要关于页面。
-- 支持蓝粉二次元主题和紫色淡雅古风主题切换。
-
-## RSS 说明
-
-RSS 是一种内容订阅格式。用户可以把博客的 RSS 地址添加到阅读器里，之后博客发布新文章时，阅读器会自动看到更新。
-
-对个人博客来说，RSS 通常不是后台核心能力，而是一个前台输出接口，例如 `/rss.xml`。本项目第一阶段暂不实现 RSS，后续如果需要内容订阅能力再加。
-
-## 文章轻互动
-
-项目不做评论系统，但文章详情页需要保留轻互动感。推荐使用预设反馈按钮，读者只能点击预设选项，不能输入自定义内容。
-
-第一批预设反馈：
-
-- 写的比我牛
-- 这是互联网你不如我
-- 还得练
-
-设计边界：
-
-- 只记录每个选项的点击数量。
-- 不展示用户身份。
-- 不允许用户输入文本。
-- 不形成评论区。
-- Redis 承接实时计数，MySQL 保存长期聚合结果。
-- 需要做简单防刷，例如同一 IP、设备或会话在短时间内限制重复点击。
-
-## 建议数据模型
-
-### Article
-
-```ts
-type Article = {
-  id: string
-  title: string
-  slug: string
-  summary: string
-  contentId: string
-  cover?: string
-  categoryId?: string
-  tagIds: string[]
-  seriesId?: string
-  status: 'draft' | 'published'
-  publishedAt?: string
-  createdAt: string
-  updatedAt: string
-}
-```
-
-### ArticleContent
-
-```ts
-type ArticleContent = {
-  id: string
-  articleId: string
-  document: Record<string, unknown>
-  version: number
-  createdAt: string
-  updatedAt: string
-}
-```
-
-### Category
-
-```ts
-type Category = {
-  id: string
-  name: string
-  slug: string
-  description?: string
-  createdAt: string
-  updatedAt: string
-}
-```
-
-### Tag
-
-```ts
-type Tag = {
-  id: string
-  name: string
-  slug: string
-  createdAt: string
-  updatedAt: string
-}
-```
-
-### SiteLink
-
-```ts
-type SiteLink = {
-  id: string
-  title: string
-  url: string
-  description?: string
-  icon?: string
-  category?: string
-  sortOrder: number
-  createdAt: string
-  updatedAt: string
-}
-```
-
-### FriendLink
-
-```ts
-type FriendLink = {
-  id: string
-  name: string
-  url: string
-  avatar?: string
-  description?: string
-  status: 'visible' | 'hidden'
-  sortOrder: number
-  createdAt: string
-  updatedAt: string
-}
-```
-
-### KnowledgeRelation
-
-```ts
-type KnowledgeRelation = {
-  id: string
-  sourceId: string
-  targetId: string
-  sourceType: 'article' | 'series' | 'tag' | 'category'
-  targetType: 'article' | 'series' | 'tag' | 'category'
-  relationType: 'reference' | 'prerequisite' | 'extension' | 'series' | 'custom'
-  label?: string
-  createdAt: string
-  updatedAt: string
-}
-```
-
-### ArticleReaction
-
-```ts
-type ArticleReaction = {
-  id: string
-  articleId: string
-  key: 'better_than_me' | 'internet_energy' | 'keep_training'
-  label: string
-  count: number
-  createdAt: string
-  updatedAt: string
-}
-```
-
-## 阶段计划
-
-### 第一阶段：项目骨架
-
-- 接入 Tailwind CSS
-- 接入 lucide-vue-next
-- 建立页面路由
-- 建立基础布局
-- 建立前台导航
-- 确定视觉风格和响应式规则
-
-### 第二阶段：前台内容展示
-
-- 首页
-- 文库列表
-- 文章详情
-- 常用网站
-- 归档
-- 友链
-- 关于
-
-### 第三阶段：后台管理
-
-- 登录页面
-- 后台布局
-- 内容管理页面
-- 表单与列表组件
-- 基础鉴权方案
-- 类前台页面的后台编辑入口
-
-### 第四阶段：在线编辑与知识关系
-
-- 选择成熟编辑器核心方案
-- 建立文章内容块数据结构
-- 实现实时渲染与编辑体验
-- 预留自定义语法扩展能力
-- 接入 Vue Flow
-- 建立文章关系编辑与展示
-
-### 第五阶段：内容存储与发布
-
-- 接入 MySQL、MongoDB、Redis
-- 接入文章编辑与发布流程
-- 支持搜索、分类、标签、归档聚合
-
-## 待确认问题
-
-- 腾讯云 COS 的存储桶区域、访问域名和图片处理策略。
-- Tiptap 需要优先支持哪些自定义语法和自定义节点？
-
-## 本地开发
-
-安装依赖：
+环境要求：**Node.js 22+** 与 **pnpm 10+**（当前版本无需数据库、Docker 或环境变量配置）。
 
 ```bash
+# 1. 安装依赖
 pnpm install
-```
 
-启动开发服务：
-
-```bash
+# 2. 启动本地开发服务（默认 http://localhost:3000）
 pnpm dev
+
+# 3. 静态预渲染打包（产物输出至 .output/public）
+pnpm generate
+
+# 4. 本地预览静态打包结果
+pnpm preview
 ```
 
-构建生产版本：
+---
+
+## ☁️ 部署指南
+
+### 方式一：Docker Compose + Caddy 自托管部署（推荐 VPS / 独立域名）
+
+仓库内置多阶段 [Dockerfile](./Dockerfile)（`node:22-alpine` 静态预渲染 → 极简 `caddy:2-alpine` 托管）、[Caddyfile](./Caddyfile) 与 [docker-compose.yml](./docker-compose.yml)，支持自动 Zstd/Gzip 压缩、分级缓存与 Let's Encrypt 自动 HTTPS。
 
 ```bash
-pnpm build
+# 1. 复制环境变量模板
+cp .env.example .env
+
+# 2. 按场景修改 .env：
+#    - 本地/测试 HTTP 预览：SITE_ADDRESS=:80，HTTP_PORT=8080
+#    - 生产域名自动 HTTPS：SITE_ADDRESS=kertoriy.dev，HTTP_PORT=80，HTTPS_PORT=443
+
+# 3. 构建并后台启动 Caddy 容器
+docker compose up -d --build
 ```
+
+> 修改内容后重新执行 `docker compose up -d --build` 即可无感更新；`caddy_data` 与 `caddy_config` 命名卷会自动持久化已签发的 TLS 证书。
+
+### 方式二：GitHub Pages 自动部署
+
+仓库已内置 [GitHub Pages 自动部署工作流](./.github/workflows/deploy.yml)：
+
+1. 推送代码至 `main` 分支（或手动触发 `workflow_dispatch`）；
+2. GitHub Actions 自动执行 `pnpm install --frozen-lockfile` 与 `pnpm generate`；
+3. 将 `.output/public` 静态预渲染产物自动发布到 GitHub Pages。
+
+> 若绑定自定义根域名（例如 `https://kertoriy.dev`）或部署到 `<username>.github.io` 根路径，将 `.github/workflows/deploy.yml` 中的 `NUXT_APP_BASE_URL` 改为 `/` 即可。
+
+---
+
+## 📄 开源协议
+
+本项目基于 [MIT License](./LICENSE) 开源。
+
+---
+
+<details>
+<summary><strong>📌 后续演进规划（点击展开查看全栈化与后台规划摘要）</strong></summary>
+
+当前阶段已完成全部前台核心阅读体验、统计看板、文件驱动与创意互动模块；后续若升级为动态全栈知识库系统，规划方向如下（详见 [AGENTS.md](./AGENTS.md)）：
+
+- **前后台一体编辑体验**：保留与前台一致的视觉标准，集成 **Tiptap** 所见即所得编辑器与自定义语法扩展，支持类飞书/语雀的实时渲染创作。
+- **知识关系图谱**：基于 **Vue Flow** 可视化文章、专题、标签与前置/延伸阅读之间的知识脉络。
+- **混合存储与鉴权**：MySQL（元信息/关系边/长期聚合统计）+ MongoDB（正文块与历史版本）+ Redis（实时计数/会话/限流），单管理员环境变量哈希密码 + HttpOnly Cookie 鉴权，腾讯云 COS 对象存储。
+
+</details>
+
+---
+
+<div align="center">
+  <sub>Made with ❤️ by <strong>Kertoriy</strong> · Powered by Nuxt 4 & Tailwind CSS v4</sub>
+</div>

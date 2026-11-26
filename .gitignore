@@ -8,20 +8,37 @@ dist
 
 # Node dependencies
 node_modules
+.pnpm-store
+
+# TypeScript / Test / Coverage
+*.tsbuildinfo
+coverage
 
 # Logs
 logs
 *.log
+npm-debug.log*
+pnpm-debug.log*
 
-# Misc
+# OS & Editors
 .DS_Store
+Thumbs.db
+Desktop.ini
 .fleet
 .idea
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+*.swo
+*.tmp
+*.bak
 
 # Local env files
 .env
 .env.*
 !.env.example
 
-# 可选：使用项目内相对路径存放 Docker 数据时
-.docker-data
+# Local Caddy runtime data (if bind-mounted)
+caddy_data
+caddy_config

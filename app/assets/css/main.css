@@ -1,41 +1,129 @@
 @import "tailwindcss";
 
-@theme {
-  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+@theme inline {
+  --font-sans: "Inter", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  --color-foreground: #172033;
-  --color-muted: #7c879b;
-  --color-border: rgb(80 104 140 / 0.12);
-  --color-primary: #3e7df7;
-  --color-primary-strong: #2467ea;
-  --color-secondary: #86c5ff;
-  --color-accent: #7edbd8;
-  --color-surface: rgb(255 255 255 / 0.88);
-  --color-surface-strong: rgb(255 255 255 / 0.96);
-  --color-ring: rgb(62 125 247 / 0.18);
-  --color-bg: #f7faff;
-  --color-bg-soft: #fdfefe;
+  /* 映射运行时亮/暗色 CSS 变量为原生 Tailwind v4 语义工具类（支持透明度和悬停修饰符） */
+  --color-chrome: var(--ui-chrome);
+  --color-canvas: var(--ui-canvas);
+  --color-surface: var(--ui-surface-subtle);
+  --color-surface-hover: var(--ui-surface-hover);
+  --color-pill-active: var(--ui-pill-active);
+  --color-border: var(--ui-border);
+  --color-border-strong: var(--ui-border-strong);
 
-  --shadow-panel: 0 18px 50px rgb(46 76 126 / 0.08);
-  --shadow-soft: 0 10px 26px rgb(46 76 126 / 0.06);
+  --color-ink: var(--ui-ink);
+  --color-ink-secondary: var(--ui-ink-secondary);
+  --color-ink-muted: var(--ui-ink-muted);
+  --color-foreground: var(--ui-ink);
+  --color-muted: var(--ui-ink-muted);
+
+  --color-accent: var(--ui-accent);
+  --color-accent-hover: var(--ui-accent-hover);
+  --color-accent-soft: var(--ui-accent-soft);
+  --color-accent-ink: var(--ui-accent-ink);
+  --color-primary: var(--ui-accent);
+  --color-primary-strong: var(--ui-accent-hover);
+
+  --color-code-bg: var(--ui-code-bg);
+  --color-code-ink: var(--ui-code-ink);
+
+  --radius-panel: var(--ui-radius-panel);
+  --radius-card: var(--ui-radius-card);
+  --radius-inner: var(--ui-radius-inner);
 }
 
-[data-theme="classic"] {
-  --color-foreground: #302840;
-  --color-muted: #82778d;
-  --color-border: rgb(129 107 164 / 0.14);
-  --color-primary: #8b72dc;
-  --color-primary-strong: #7257c7;
-  --color-secondary: #d9b6c8;
-  --color-accent: #9fa7d8;
-  --color-surface: rgb(255 255 255 / 0.9);
-  --color-surface-strong: rgb(255 255 255 / 0.97);
-  --color-ring: rgb(139 114 220 / 0.18);
-  --color-bg: #faf7ff;
-  --color-bg-soft: #fffefd;
+@property --article-tag-sweep {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
 
-  --shadow-panel: 0 18px 50px rgb(105 74 134 / 0.08);
-  --shadow-soft: 0 10px 26px rgb(105 74 134 / 0.06);
+/* 默认使用 Kiro.dev 暗色主题色板（#09090b / #16131a / #1f1b24 / #28242e + 标志紫 #9147ff） */
+:root,
+:root[data-theme="dark"] {
+  --ui-chrome: #09090b;
+  --ui-canvas: #16131a;
+  --ui-surface-subtle: #1f1b24;
+  --ui-surface-hover: #28242e;
+  --ui-pill-active: rgb(145 71 255 / 0.16);
+  --ui-border: #24202b;
+  --ui-border-strong: #322c3d;
+
+  --ui-ink: #fafafa;
+  --ui-ink-secondary: #c1bec6;
+  --ui-ink-muted: #928d9a;
+
+  --ui-accent: #9147ff;
+  --ui-accent-hover: #9f63ff;
+  --ui-accent-soft: rgb(145 71 255 / 0.16);
+  --ui-accent-ink: #c59eff;
+
+  --ui-code-bg: #1e1b24;
+  --ui-code-ink: #b8b3c2;
+  --ui-bar-bg: #1c1922;
+  --ui-hover-ring-fill: #1a1720;
+  --ui-hover-ring-edge: rgb(255 255 255 / 0.045);
+  --ui-hover-ring-fill-strong: #201c27;
+  --ui-hover-ring-edge-strong: rgb(255 255 255 / 0.08);
+  --ui-nav-active-bg: #27232f;
+  --ui-scrollbar-line: #2b2734;
+  --ui-scrollbar-line-fill: #9147ff;
+  --ui-scrollbar-thumb-bg: #25222d;
+  --ui-scrollbar-thumb-border: #433e4f;
+  --ui-scrollbar-thumb-grip: #a264ff;
+  --ui-scrollbar-track-edge: #2b2734;
+  --ui-scrollbar-ring: #9147ff;
+
+  --ui-radius-panel: 22px;
+  --ui-radius-card: 18px;
+  --ui-radius-inner: 14px;
+  --ui-radius-control: 999px;
+
+  --ui-shadow-sheet: 0 1px 2px rgb(0 0 0 / 0.35);
+  --ui-shadow-control: 0 1px 2px rgb(0 0 0 / 0.25);
+  --ui-shadow-float: 0 8px 24px rgb(0 0 0 / 0.4);
+}
+
+/* Kiro 配套亮色模式（:root[data-theme="light"] 保证更高权重覆盖） */
+:root[data-theme="light"] {
+  --ui-chrome: #f3f3f5;
+  --ui-canvas: #ffffff;
+  --ui-surface-subtle: #f9f9f9;
+  --ui-surface-hover: #f3f3f5;
+  --ui-pill-active: rgb(130 56 245 / 0.1);
+  --ui-border: #ececef;
+  --ui-border-strong: #dedee4;
+
+  --ui-ink: #141218;
+  --ui-ink-secondary: #4a4554;
+  --ui-ink-muted: #756e82;
+
+  --ui-accent: #8238f5;
+  --ui-accent-hover: #6f26e0;
+  --ui-accent-soft: rgb(130 56 245 / 0.1);
+  --ui-accent-ink: #6a24d6;
+
+  --ui-code-bg: #f9f9f9;
+  --ui-code-ink: #5a5f69;
+  --ui-bar-bg: #f9f9f9;
+  --ui-hover-ring-fill: #f9f9f9;
+  --ui-hover-ring-edge: #ededf0;
+  --ui-hover-ring-fill-strong: #f4f4f6;
+  --ui-hover-ring-edge-strong: #e3e3e8;
+  --ui-nav-active-bg: #efeff2;
+  --ui-scrollbar-line: #e7e7ec;
+  --ui-scrollbar-line-fill: #8238f5;
+  --ui-scrollbar-thumb-bg: #f9f9f9;
+  --ui-scrollbar-thumb-border: #d4d4dc;
+  --ui-scrollbar-thumb-grip: #8238f5;
+  --ui-scrollbar-track-edge: #e7e7ec;
+  --ui-scrollbar-ring: #8238f5;
+
+  --ui-shadow-sheet: 0 1px 3px rgb(24 18 36 / 0.04);
+  --ui-shadow-control: 0 1px 2px rgb(24 18 36 / 0.05);
+  --ui-shadow-float: 0 6px 20px rgb(24 18 36 / 0.07);
 }
 
 @layer base {
@@ -43,15 +131,29 @@
     box-sizing: border-box;
   }
 
+  html {
+    background-color: var(--ui-chrome);
+    color: var(--ui-ink);
+  }
+
   body {
-    @apply min-h-screen bg-bg-soft font-sans text-foreground antialiased;
-    margin: 0;
+    @apply min-h-screen m-0 bg-chrome font-sans text-sm leading-[1.65] text-ink antialiased;
   }
 
   button,
   input,
-  textarea {
+  textarea,
+  select {
     font: inherit;
+    color: inherit;
+  }
+
+  input[type="search"]::-webkit-search-decoration,
+  input[type="search"]::-webkit-search-cancel-button,
+  input[type="search"]::-webkit-search-results-button,
+  input[type="search"]::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+    appearance: none;
   }
 
   button,
@@ -63,8 +165,186 @@
     color: inherit;
     text-decoration: none;
   }
+
+  code,
+  pre {
+    font-family: var(--font-mono);
+  }
+
+  /* 全局极细悬浮式自定义滚动条（WebKit / Chromium / Edge / Safari） */
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+    margin-block: 14px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background-color: var(--ui-scrollbar-thumb);
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--ui-scrollbar-thumb-hover);
+  }
+
+  *::-webkit-scrollbar-button,
+  *::-webkit-scrollbar-corner {
+    display: none;
+    background: transparent;
+  }
+
+  /* 仅 Firefox 回退到细滚动条，避免 Chromium 121+ 被 scrollbar-width 接管而忽略 ::-webkit-scrollbar */
+  @supports (-moz-appearance: none) {
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--ui-scrollbar-thumb) transparent;
+    }
+  }
 }
 
 @utility muted {
-  @apply text-muted;
+  color: var(--ui-ink-muted);
+}
+
+/* 全局共用组件基元放入 @layer components，保证页面上的 Tailwind 工具类可直接覆盖而无需 !important */
+@layer components {
+  .ui-page {
+    @apply grid w-full gap-4;
+  }
+
+  .ui-page-wide {
+    @apply grid w-full gap-4;
+  }
+
+  .ui-page-header {
+    @apply border-b border-border pb-3.5;
+  }
+
+  .ui-page-kicker {
+    @apply inline-flex items-center gap-1.5 text-xs font-medium text-accent-ink;
+  }
+
+  .ui-page-title {
+    @apply mt-1.5 text-[clamp(22px,2.3vw,27px)] font-semibold leading-[1.3] tracking-[-0.025em] text-ink;
+  }
+
+  .ui-page-desc {
+    @apply mt-2 max-w-[60ch] text-sm leading-[1.72] text-ink-secondary;
+  }
+
+  .ui-card {
+    @apply rounded-card border border-border bg-canvas;
+  }
+
+  .ui-card-subtle {
+    @apply rounded-card border border-border bg-canvas;
+    box-shadow: 0 0 0 4px var(--ui-hover-ring-fill), 0 0 0 5px var(--ui-hover-ring-edge);
+    transition: border-color 240ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 240ms cubic-bezier(0.22, 1, 0.36, 1), background-color 240ms ease;
+  }
+
+  a.ui-card-subtle:hover {
+    border-color: var(--ui-border-strong);
+    box-shadow: 0 0 0 4px var(--ui-hover-ring-fill-strong), 0 0 0 5px var(--ui-hover-ring-edge-strong);
+  }
+
+  .ui-callout {
+    @apply rounded-inner border border-border px-4 py-3 text-[13.5px] leading-[1.78] text-ink-secondary;
+    background-color: var(--ui-bar-bg);
+  }
+
+  .ui-code-pill {
+    @apply inline-flex items-center rounded-full bg-code-bg px-2.5 py-0.5 font-mono text-[11.5px] leading-[1.45] text-code-ink;
+  }
+
+  .ui-tag {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-2.5 py-0.5 text-xs font-medium leading-normal text-ink-secondary;
+  }
+
+  .ui-btn {
+    @apply inline-flex h-9 cursor-pointer items-center justify-center gap-1.5 rounded-full border border-border-strong bg-surface px-4 text-[13px] font-medium text-ink transition-colors duration-150 hover:border-accent hover:bg-surface-hover;
+    box-shadow: var(--ui-shadow-control);
+  }
+
+  .ui-btn-primary {
+    @apply inline-flex h-9 cursor-pointer items-center justify-center gap-1.5 rounded-full border border-transparent bg-accent px-4.5 text-[13px] font-medium text-white transition-colors duration-150 hover:bg-accent-hover;
+  }
+
+  .icon-tile {
+    @apply inline-grid size-9 shrink-0 place-items-center rounded-full border border-border bg-canvas text-accent-ink;
+  }
+
+  /* 文章卡片悬浮标签：单层真实边框 conic-gradient 渐进闭合，避免 mask-composite 亚像素上下粗细不一 */
+  .article-tag-pill {
+    --article-tag-sweep: 0deg;
+    @apply relative z-10 mx-auto -mt-3.5 inline-flex h-[28px] max-w-[calc(100%-32px)] items-center gap-1.5 rounded-full border-[1.5px] border-transparent px-3.5 text-[11.5px] leading-none font-medium text-ink-secondary ring-2 ring-canvas;
+    background-image:
+      linear-gradient(var(--ui-canvas), var(--ui-canvas)),
+      conic-gradient(
+        from 0deg at 50% 50%,
+        var(--ui-accent) 0deg var(--article-tag-sweep),
+        var(--ui-border) var(--article-tag-sweep) calc(360deg - var(--article-tag-sweep)),
+        var(--ui-accent) calc(360deg - var(--article-tag-sweep)) 360deg
+      );
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    transition:
+      color 200ms ease,
+      --article-tag-sweep 380ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .article-tag-pill svg {
+    @apply shrink-0 text-ink-muted transition-colors duration-200;
+  }
+
+  .article-card-hover:hover .article-tag-pill,
+  .article-card-hover:focus-visible .article-tag-pill,
+  .blog-article-card:hover .article-tag-pill,
+  .blog-article-card:focus-visible .article-tag-pill {
+    --article-tag-sweep: 181deg;
+    color: var(--ui-accent-ink);
+    transition:
+      color 200ms ease,
+      --article-tag-sweep 460ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .article-card-hover:hover .article-tag-pill svg,
+  .article-card-hover:focus-visible .article-tag-pill svg,
+  .blog-article-card:hover .article-tag-pill svg,
+  .blog-article-card:focus-visible .article-tag-pill svg {
+    color: var(--ui-accent);
+  }
+
+  /* 列表触底滚动加载占位与状态提示（碎碎念 / 文库共用） */
+  .scroll-load-sentinel {
+    @apply flex min-h-[42px] w-full items-center justify-center pt-3 pb-1;
+  }
+
+  .scroll-load-status {
+    @apply inline-flex items-center gap-2 text-[12px] text-ink-muted;
+  }
+
+  .scroll-load-spinner {
+    @apply inline-block size-3.5 rounded-full border-2 border-border-strong border-t-accent;
+    animation: blog-spin 680ms cubic-bezier(0.42, 0.14, 0.58, 0.86) infinite;
+  }
+
+  .scroll-load-trigger {
+    @apply inline-flex h-[30px] cursor-pointer items-center justify-center rounded-full border border-border px-3.5 text-[12px] font-medium text-ink-muted transition-[border-color,background-color,color] duration-150 hover:border-border-strong hover:text-ink;
+    background-color: var(--ui-bar-bg);
+  }
+
+  .scroll-load-end {
+    @apply inline-flex items-center gap-2.5 text-[11.5px] text-ink-muted/75;
+  }
+
+  .scroll-load-end::before,
+  .scroll-load-end::after {
+    content: "";
+    @apply h-px w-8;
+    background-color: var(--ui-border);
+  }
 }

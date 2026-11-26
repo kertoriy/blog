@@ -1,0 +1,281 @@
+@reference "./main.css";
+@layer theme, base, components, utilities;
+
+/* 首页 Section 4：全域满铺渐隐六边形蜂巢标签独立全屏区 */
+@layer components {
+  .blog-honeycomb-section {
+    min-height: var(--home-screen-h, calc(100dvh - 58px));
+    @apply relative flex w-full flex-col justify-between overflow-hidden px-5 py-4 pb-6;
+  }
+
+  .blog-honeycomb-bar {
+    @apply relative z-20 flex w-full flex-wrap items-center justify-between gap-3 py-2 pointer-events-none;
+  }
+
+  .blog-honeycomb-bar > * {
+    pointer-events: auto;
+  }
+
+  /* 全屏满铺蜂巢主舞台：7 行无缝六边形阵列铺满整屏，从四边向中心渐隐浮现 */
+  .blog-honeycomb-stage {
+    @apply absolute inset-0 z-10 flex items-center justify-center overflow-hidden;
+    --hex-w: 112px;
+    --hex-h: 128px;
+    --hex-gap: 8px;
+    -webkit-mask-image: radial-gradient(
+      ellipse 64% 62% at 50% 50%,
+      #000 44%,
+      rgb(0 0 0 / 0.68) 66%,
+      rgb(0 0 0 / 0.28) 84%,
+      rgb(0 0 0 / 0.06) 94%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      ellipse 64% 62% at 50% 50%,
+      #000 44%,
+      rgb(0 0 0 / 0.68) 66%,
+      rgb(0 0 0 / 0.28) 84%,
+      rgb(0 0 0 / 0.06) 94%,
+      transparent 100%
+    );
+  }
+
+  .blog-honeycomb-aura {
+    @apply pointer-events-none absolute inset-0;
+    background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--ui-accent) 10%, transparent) 0%, transparent 56%);
+  }
+
+  .blog-honeycomb-hive {
+    @apply relative z-10 flex flex-col items-center;
+  }
+
+  /* 12 - 13 - 12 - 13 - 12 - 13 - 12 交错嵌套行 */
+  .blog-honeycomb-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--hex-gap);
+  }
+
+  .blog-honeycomb-row + .blog-honeycomb-row {
+    margin-top: calc(var(--hex-h) * -0.25 + var(--hex-gap) * 0.85);
+  }
+
+  /* 单个圆角六边形节点 */
+  .blog-hex-cell {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    width: var(--hex-w);
+    height: var(--hex-h);
+    flex: none;
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    z-index: 2;
+    transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), z-index 0ms;
+  }
+
+  /* 外围环境六边形：与核心完全同构无缝咬合，清晰勾勒外圈蜂窝层次 */
+  .blog-hex-cell.is-ambient {
+    cursor: default;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.92;
+  }
+
+  .blog-hex-cell.is-ambient .blog-hex-outer {
+    fill: var(--ui-hover-ring-fill);
+    stroke: var(--ui-hover-ring-edge);
+  }
+
+  .blog-hex-cell.is-ambient .blog-hex-inner {
+    fill: color-mix(in srgb, var(--ui-surface-subtle) 65%, var(--ui-canvas));
+    stroke: var(--ui-border);
+  }
+
+  .blog-hex-cell:not(.is-ambient):hover,
+  .blog-hex-cell:not(.is-ambient):focus-visible {
+    z-index: 12;
+    transform: translateY(-4px) scale(1.045);
+    outline: none;
+  }
+
+  .blog-hex-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  /* 外层 #F9F9F9 轻柔垫层六边形 */
+  .blog-hex-outer {
+    fill: var(--ui-hover-ring-fill);
+    stroke: var(--ui-hover-ring-edge);
+    stroke-width: 1.25;
+    transition: fill 220ms ease, stroke 220ms ease;
+  }
+
+  /* 内层主卡面六边形 */
+  .blog-hex-inner {
+    fill: var(--ui-canvas);
+    stroke: var(--ui-border);
+    stroke-width: 1.25;
+    transition: fill 220ms ease, stroke 220ms ease, filter 220ms ease;
+  }
+
+  .blog-hex-cell:not(.is-ambient):hover .blog-hex-outer,
+  .blog-hex-cell:not(.is-ambient):focus-visible .blog-hex-outer {
+    fill: var(--ui-accent-soft);
+    stroke: color-mix(in srgb, var(--ui-accent) 26%, transparent);
+  }
+
+  .blog-hex-cell:not(.is-ambient):hover .blog-hex-inner,
+  .blog-hex-cell:not(.is-ambient):focus-visible .blog-hex-inner {
+    stroke: color-mix(in srgb, var(--ui-accent) 62%, var(--ui-border));
+    filter: drop-shadow(0 6px 14px color-mix(in srgb, var(--ui-accent) 16%, transparent));
+  }
+
+  /* 中心主控六边形（品牌紫韵核心） */
+  .blog-hex-cell.is-hub .blog-hex-outer {
+    fill: var(--ui-accent-soft);
+    stroke: color-mix(in srgb, var(--ui-accent) 28%, transparent);
+  }
+
+  .blog-hex-cell.is-hub .blog-hex-inner {
+    fill: color-mix(in srgb, var(--ui-accent) 12%, var(--ui-canvas));
+    stroke: color-mix(in srgb, var(--ui-accent) 52%, var(--ui-border));
+  }
+
+  .blog-hex-cell.is-hub:hover .blog-hex-inner,
+  .blog-hex-cell.is-hub:focus-visible .blog-hex-inner {
+    fill: color-mix(in srgb, var(--ui-accent) 18%, var(--ui-canvas));
+    stroke: var(--ui-accent);
+  }
+
+  /* 六边形内部排版 */
+  .blog-hex-body {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 82%;
+    text-align: center;
+    padding: 0 4px;
+  }
+
+  .blog-hex-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    background: var(--ui-bar-bg);
+    color: var(--ui-ink-muted);
+    transition: background-color 200ms ease, color 200ms ease, transform 200ms ease;
+  }
+
+  .blog-hex-cell:not(.is-ambient):hover .blog-hex-icon,
+  .blog-hex-cell:not(.is-ambient):focus-visible .blog-hex-icon,
+  .blog-hex-cell.is-hub .blog-hex-icon {
+    background: var(--ui-accent-soft);
+    color: var(--ui-accent-ink);
+  }
+
+  .blog-hex-name {
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--ui-ink);
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 180ms ease;
+  }
+
+  .blog-hex-cell:not(.is-ambient):hover .blog-hex-name,
+  .blog-hex-cell:not(.is-ambient):focus-visible .blog-hex-name,
+  .blog-hex-cell.is-hub .blog-hex-name {
+    color: var(--ui-accent-ink);
+  }
+
+  .blog-hex-meta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1px 6.5px;
+    border-radius: 999px;
+    background: var(--ui-bar-bg);
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1.45;
+    font-variant-numeric: tabular-nums;
+    color: var(--ui-ink-muted);
+    transition: background-color 200ms ease, color 200ms ease;
+  }
+
+  .blog-hex-cell.is-hub .blog-hex-meta,
+  .blog-hex-cell:not(.is-ambient):hover .blog-hex-meta,
+  .blog-hex-cell:not(.is-ambient):focus-visible .blog-hex-meta {
+    background: color-mix(in srgb, var(--ui-accent) 12%, var(--ui-canvas));
+    color: var(--ui-accent-ink);
+  }
+
+  @media (width < 52rem) {
+    .blog-honeycomb-bar {
+      top: 52px;
+    }
+
+    .blog-honeycomb-section {
+      min-height: auto;
+    }
+  }
+
+  @container blog-content (width < 820px) {
+    .blog-honeycomb-stage {
+      --hex-w: 96px;
+      --hex-h: 110px;
+      --hex-gap: 6px;
+    }
+
+    .blog-hex-name {
+      font-size: 11.5px;
+    }
+
+    .blog-hex-icon {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  @container blog-content (width < 600px) {
+    .blog-honeycomb-stage {
+      @apply relative inset-auto my-4;
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+
+    .blog-honeycomb-hive {
+      transform: none;
+    }
+
+    .blog-hex-cell.is-ambient {
+      display: none;
+    }
+
+    .blog-honeycomb-row {
+      flex-wrap: wrap;
+    }
+
+    .blog-honeycomb-row + .blog-honeycomb-row {
+      margin-top: 8px;
+    }
+  }
+}

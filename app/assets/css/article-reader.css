@@ -1,0 +1,448 @@
+@reference "./main.css";
+@layer theme, base, components, utilities;
+
+/* 文章详情页专属样式：全幅氛围暗幕封面 + 弧形过渡 + 居中精致排版 + 灰圆中文序号标题 */
+@layer components {
+  /* 进入文章详情页时，主内容区取消默认内边距以实现封面全幅贴边 */
+  .blog-content:has(.article-detail) {
+    padding: 0;
+  }
+
+  .article-detail {
+    @apply flex min-h-full w-full flex-col bg-canvas;
+  }
+
+  /* 吸顶不随正文滚动的「下载 / 目录」零占位悬浮栏 */
+  .article-sticky-nav {
+    @apply pointer-events-none sticky top-0 z-30 h-0 w-full overflow-visible;
+  }
+
+  .article-hero-top {
+    @apply relative flex w-full items-center justify-end gap-2 px-5 pt-4;
+  }
+
+  .article-glass-nav {
+    @apply pointer-events-auto inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-white/15 bg-black/32 px-3 py-1.5 text-xs font-medium text-white/88 backdrop-blur-md transition-[background-color,border-color,color,box-shadow] duration-200 hover:border-white/28 hover:bg-black/48 hover:text-white;
+  }
+
+  /* 滚过暗色封面进入正文后，自动切换为与画布和谐的高对比度磨砂胶囊 */
+  .article-sticky-nav.is-stuck .article-glass-nav {
+    border-color: var(--ui-border);
+    background-color: color-mix(in srgb, var(--ui-canvas) 88%, transparent);
+    color: var(--ui-ink-secondary);
+    box-shadow: var(--ui-shadow-control);
+  }
+
+  .article-sticky-nav.is-stuck .article-glass-nav:hover {
+    border-color: var(--ui-border-strong);
+    background-color: var(--ui-canvas);
+    color: var(--ui-ink);
+  }
+
+  /* =========================================================
+     1. 全幅氛围封面头图（参考图居中斜体标题 + 暗色磨砂胶囊栏 + 柔和底弧）
+     ========================================================= */
+  .article-hero {
+    @apply relative flex min-h-[clamp(320px,45dvh,420px)] w-full flex-col justify-between overflow-hidden px-5 pt-14 pb-12 text-white;
+    background-color: #14121b;
+  }
+
+  .article-hero-bg {
+    @apply pointer-events-none absolute inset-0 overflow-hidden;
+  }
+
+  .article-hero-bg img {
+    @apply size-full object-cover object-center;
+    filter: blur(3px) saturate(0.88) brightness(0.62);
+    transform: scale(1.07);
+  }
+
+  .article-hero-scrim {
+    @apply pointer-events-none absolute inset-0;
+    background:
+      radial-gradient(circle at 50% 38%, rgb(20 16 32 / 0.16) 0%, rgb(10 9 16 / 0.62) 78%),
+      linear-gradient(180deg, rgb(12 10 18 / 0.56) 0%, rgb(14 12 22 / 0.52) 48%, rgb(10 9 16 / 0.84) 100%);
+  }
+
+  /* 居中标题、分类标签与摘要 */
+  .article-hero-center {
+    @apply relative z-10 my-auto flex w-full flex-col items-center px-4 pt-5 pb-3 text-center;
+  }
+
+  .article-hero-title {
+    @apply m-0 text-[clamp(24px,3.2cqi,36px)] font-bold leading-[1.3] tracking-[-0.015em] text-white;
+    font-style: italic;
+    text-shadow: 0 4px 20px rgb(0 0 0 / 0.42);
+  }
+
+  .article-hero-cats {
+    @apply mt-3 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 text-xs font-medium text-white/75;
+  }
+
+  .article-hero-cat-link {
+    @apply transition-colors duration-150 hover:text-white;
+  }
+
+  .article-hero-cat-dot {
+    @apply text-white/35;
+  }
+
+  .article-hero-divider {
+    @apply mt-2.5 inline-flex items-center justify-center text-white/50;
+  }
+
+  .article-hero-summary {
+    @apply mt-2 mb-0 max-w-[56ch] text-[13px] leading-[1.7] text-white/80;
+    text-shadow: 0 1px 10px rgb(0 0 0 / 0.35);
+  }
+
+  /* 底部悬浮暗色磨砂元信息胶囊条 */
+  .article-hero-dock {
+    @apply relative z-10 mt-5 flex w-full flex-wrap items-center justify-center gap-2;
+  }
+
+  .article-meta-chip {
+    @apply inline-flex h-[30px] items-center gap-1.5 rounded-full border border-white/14 bg-black/38 px-3 text-[11.5px] font-medium tabular-nums text-white/88 backdrop-blur-md;
+  }
+
+  .article-meta-chip svg {
+    @apply shrink-0 text-white/65;
+  }
+
+  .article-author-chip {
+    @apply pl-1.5 pr-3;
+  }
+
+  .article-author-avatar {
+    @apply size-[20px] rounded-full object-cover ring-1 ring-white/25;
+  }
+
+  .article-dock-btn {
+    @apply inline-grid size-[30px] cursor-pointer place-items-center rounded-full border border-white/14 bg-black/38 text-white/85 backdrop-blur-md transition-[background-color,border-color,color,transform] duration-150 hover:border-white/30 hover:bg-black/55 hover:text-white;
+  }
+
+  .article-dock-btn.is-disabled {
+    @apply pointer-events-none opacity-35;
+  }
+
+  /* 迷你语音朗读波形胶囊（还原参考图右侧音频条，并接入真实 Web Speech API） */
+  .article-tts-pill {
+    @apply inline-flex h-[30px] items-center gap-2 rounded-full border border-white/14 bg-black/38 px-2.5 text-white/85 backdrop-blur-md transition-[border-color,background-color] duration-150;
+  }
+
+  .article-tts-pill.is-playing {
+    @apply border-accent/65 bg-black/55 text-white;
+  }
+
+  .article-tts-bars {
+    @apply inline-flex h-3.5 items-center gap-[2.5px];
+  }
+
+  .article-tts-bars span {
+    @apply w-[2px] rounded-full bg-white/45 transition-[height,background-color] duration-200;
+    height: var(--bar-h, 6px);
+  }
+
+  .article-tts-pill.is-playing .article-tts-bars span {
+    @apply bg-accent-ink;
+    animation: article-wave 0.9s ease-in-out infinite alternate;
+    animation-delay: var(--bar-d, 0ms);
+  }
+
+  .article-tts-play {
+    @apply inline-grid size-5 cursor-pointer place-items-center rounded-full border-0 bg-transparent text-white/85 transition-colors duration-150 hover:text-white;
+  }
+
+  @keyframes article-wave {
+    0% {
+      transform: scaleY(0.45);
+      opacity: 0.65;
+    }
+    100% {
+      transform: scaleY(1.25);
+      opacity: 1;
+    }
+  }
+
+  /* 封面底部柔和弧形过渡，与正文画布无缝衔接 */
+  .article-hero-curve {
+    @apply pointer-events-none absolute inset-x-0 -bottom-px z-10 h-7 w-full;
+    fill: var(--ui-canvas);
+    transition: fill 240ms ease;
+  }
+
+  /* 浮动目录面板（点击顶栏「目录」展开，不打扰正文居中阅读） */
+  .article-toc-popover {
+    @apply pointer-events-auto absolute top-14 right-5 z-30 w-[min(280px,calc(100%-2.5rem))] rounded-card border border-border bg-canvas/95 p-4 text-left text-ink shadow-lg backdrop-blur-md;
+  }
+
+  .article-toc-title {
+    @apply mb-2.5 flex items-center justify-between text-xs font-semibold text-ink-muted;
+  }
+
+  .article-toc-list {
+    @apply m-0 grid max-h-[260px] list-none gap-1 overflow-y-auto p-0 text-[13px];
+  }
+
+  .article-toc-link {
+    @apply flex items-center gap-2 rounded-[8px] px-2 py-1.5 text-ink-secondary transition-colors duration-150 hover:bg-surface hover:text-ink;
+  }
+
+  /* =========================================================
+     2. 居中精致正文排版（复刻参考图灰圆中文序号 h2 / h3 与留白节奏）
+     ========================================================= */
+  .article-body-shell {
+    @apply w-full px-6 pt-9 pb-16 sm:px-10;
+  }
+
+  .md-prose {
+    counter-reset: md-h2;
+    @apply text-[15.5px] leading-[1.92] text-ink;
+  }
+
+  /* H2：浅灰圆形中文序号（一、二、三） + 粗体无下划线标题 */
+  .md-prose .md-h2 {
+    counter-increment: md-h2;
+    counter-reset: md-h3;
+    @apply mt-10 mb-4 flex scroll-mt-6 items-center gap-2.5 text-[19.5px] font-bold leading-[1.4] tracking-[-0.015em] text-ink;
+  }
+
+  .md-prose .md-h2:first-child {
+    @apply mt-2;
+  }
+
+  .md-prose .md-h2::before {
+    content: counter(md-h2, cjk-ideographic);
+    @apply inline-grid size-7 shrink-0 place-items-center rounded-full text-[13px] font-bold text-ink-secondary;
+    background-color: var(--ui-nav-active-bg, var(--ui-bar-bg));
+  }
+
+  /* H3：浅灰圆形括弧序号（(一)、(二)） + 次级标题 */
+  .md-prose .md-h3 {
+    counter-increment: md-h3;
+    @apply mt-7 mb-3 flex scroll-mt-6 items-center gap-2 text-[16.5px] font-bold leading-[1.45] tracking-[-0.01em] text-ink;
+  }
+
+  .md-prose .md-h3::before {
+    content: "(" counter(md-h3, cjk-ideographic) ")";
+    @apply inline-flex h-[24px] shrink-0 items-center justify-center rounded-full px-2 text-[11.5px] font-semibold text-ink-secondary;
+    background-color: var(--ui-nav-active-bg, var(--ui-bar-bg));
+  }
+
+  .md-prose .md-p {
+    @apply my-4 text-ink-secondary;
+  }
+
+  .md-prose .md-p strong,
+  .md-prose li strong {
+    @apply font-semibold text-ink;
+  }
+
+  .md-prose .md-quote {
+    @apply my-6 rounded-inner border border-border px-5 py-4 text-[14.5px] leading-[1.85] text-ink-secondary;
+    background-color: var(--ui-bar-bg);
+  }
+
+  .md-prose .md-ul {
+    @apply my-4 list-disc space-y-1.5 pl-6 text-ink-secondary;
+  }
+
+  .md-prose .md-ol {
+    @apply my-4 list-decimal space-y-1.5 pl-6 text-ink-secondary;
+  }
+
+  .md-prose li {
+    @apply leading-[1.82];
+  }
+
+  .md-prose .md-inline-code {
+    @apply rounded-[6px] px-1.5 py-0.5 font-mono text-[0.86em] text-code-ink;
+    background-color: var(--ui-bar-bg);
+  }
+
+  .md-prose .md-pre {
+    @apply my-6 overflow-x-auto rounded-inner border border-border px-4.5 py-4 font-mono text-[13px] leading-[1.75] text-ink;
+    background-color: var(--ui-bar-bg);
+  }
+
+  .md-prose .md-link {
+    @apply text-accent-ink underline decoration-accent/35 underline-offset-[4px] transition-colors hover:decoration-accent;
+  }
+
+  .md-prose .md-hr {
+    @apply my-9 border-0 border-t border-border;
+  }
+
+  /* 文末一体化三段式作者与上下篇导览卡片 */
+  .article-footer-panel {
+    @apply mt-12 pt-2;
+  }
+
+  .article-end-card {
+    @apply grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1.2fr)] items-center gap-5 rounded-[20px] border border-border px-5 py-5;
+    background-color: var(--ui-bar-bg);
+  }
+
+  .article-end-author {
+    @apply flex min-w-0 flex-col gap-2.5;
+  }
+
+  .article-end-label {
+    @apply m-0 text-[12px] font-semibold tracking-[0.01em] text-ink-muted;
+  }
+
+  .article-end-label-right {
+    @apply text-right;
+  }
+
+  .article-end-bio {
+    @apply m-0 line-clamp-2 text-[13px] leading-[1.72] text-ink-secondary;
+  }
+
+  .article-end-actions {
+    @apply mt-1 flex flex-wrap items-center gap-2;
+  }
+
+  .article-end-more {
+    @apply inline-flex h-[30px] cursor-pointer items-center gap-1.5 rounded-full border-0 px-3 text-[12px] font-medium text-ink-secondary transition-[background-color,color] duration-150 hover:text-ink;
+    background-color: var(--ui-nav-active-bg);
+  }
+
+  .article-end-more.is-done {
+    background-color: var(--ui-accent-soft);
+    @apply text-accent-ink;
+  }
+
+  .article-end-icon {
+    @apply inline-grid size-[30px] cursor-pointer place-items-center rounded-full border-0 text-ink-secondary transition-[background-color,color,transform] duration-150 hover:text-ink active:scale-95;
+    background-color: var(--ui-nav-active-bg);
+  }
+
+  .article-end-icon.is-liked {
+    background-color: rgb(244 63 94 / 0.12);
+    color: #f43f5e;
+  }
+
+  .article-end-icon.is-reported {
+    background-color: rgb(245 158 11 / 0.14);
+    color: #d97706;
+  }
+
+  :root[data-theme="dark"] .article-end-icon.is-reported {
+    color: #fbbf24;
+  }
+
+  .article-end-feedback {
+    @apply ml-0.5 text-[11.5px] font-medium text-ink-muted;
+  }
+
+  /* 中间：刻晴圆形立绘双环徽章 + 右下角 Kr 印记 */
+  .article-end-medallion {
+    @apply relative mx-1 flex shrink-0 items-center justify-center;
+  }
+
+  .article-end-avatar-ring {
+    @apply size-[96px] overflow-hidden rounded-full border-[4px] border-canvas;
+    background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--ui-accent) 16%, var(--ui-canvas)) 0%, var(--ui-surface-subtle) 78%);
+    box-shadow: 0 0 0 1px var(--ui-border-strong);
+  }
+
+  .article-end-avatar {
+    @apply size-full select-none object-cover object-[28%_10%];
+    transform: scale(1.42);
+  }
+
+  .article-end-seal {
+    @apply absolute right-0.5 bottom-0.5 size-[24px] rounded-[7px] border-2 border-canvas object-cover;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.14);
+  }
+
+  /* 右侧：附加信息 + 堆叠全圆角上下篇胶囊 */
+  .article-end-nav {
+    @apply flex min-w-0 flex-col gap-2.5;
+  }
+
+  .article-end-facts {
+    @apply flex flex-wrap items-center justify-end gap-4 text-[12px] font-medium text-ink-secondary;
+  }
+
+  .article-end-fact {
+    @apply inline-flex items-center gap-1.5;
+  }
+
+  .article-fact-icon {
+    @apply inline-grid size-[20px] place-items-center rounded-full;
+  }
+
+  .article-fact-icon.is-copyright {
+    background-color: color-mix(in srgb, var(--ui-accent) 12%, transparent);
+    color: var(--ui-accent-ink);
+  }
+
+  .article-fact-icon.is-timeless {
+    background-color: rgb(34 197 94 / 0.12);
+    color: #16a34a;
+  }
+
+  .article-end-links {
+    @apply mt-0.5 flex flex-col gap-2;
+  }
+
+  .article-end-pill {
+    @apply flex h-[32px] w-full min-w-0 items-center gap-2 rounded-full px-3 text-[12px] text-ink-secondary transition-colors duration-150 hover:text-ink;
+    background-color: var(--ui-nav-active-bg);
+  }
+
+  .article-end-pill-tag {
+    @apply shrink-0 font-medium text-ink-muted;
+  }
+
+  .article-end-pill-title {
+    @apply min-w-0 flex-1 truncate font-medium text-ink-secondary transition-colors duration-150;
+  }
+
+  .article-end-pill:hover .article-end-pill-title {
+    @apply text-ink;
+  }
+
+  .article-end-pill.is-muted {
+    @apply cursor-default opacity-75;
+  }
+
+  .article-end-pill.is-muted .article-end-pill-title,
+  .article-end-pill.is-muted:hover .article-end-pill-title {
+    @apply font-normal text-ink-muted;
+  }
+
+  @media (width < 52rem) {
+    .article-sticky-nav {
+      top: 52px;
+    }
+  }
+
+  @container blog-content (width < 680px) {
+    .article-hero {
+      @apply min-h-[340px] px-4 pb-11;
+    }
+
+    .article-hero-dock {
+      @apply gap-1.5;
+    }
+
+    .article-body-shell {
+      @apply px-4 pt-7 pb-12;
+    }
+
+    .article-end-card {
+      @apply grid-cols-1 gap-4 px-4 py-4;
+    }
+
+    .article-end-label-right {
+      @apply text-left;
+    }
+
+    .article-end-facts {
+      @apply justify-start;
+    }
+  }
+}

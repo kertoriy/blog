@@ -1,36 +1,91 @@
 <script setup lang="ts">
-import { CalendarDays } from 'lucide-vue-next'
-import { archiveGroups, articles } from '~/data/mock'
+import type { Component } from 'vue'
+import { BookOpen, Code2, Compass, FileText } from 'lucide-vue-next'
+import { articles, type BlogArticle } from '~/utils/articles'
+import '~/assets/css/blog-archive.css'
+
+useSeoMeta({
+  title: '归档 · kertoriy 的研发空间',
+  description: '按年份时间线快速浏览全部 Markdown 文章。'
+})
+
+const categoryIcons: Record<string, Component> = {
+  工程实践: Code2,
+  产品设计: BookOpen,
+  可视化: Compass
+}
+
+function getCategoryIcon(category: string): Component {
+  return categoryIcons[category] ?? FileText
+}
+
+function formatYearWords(words: number): string {
+  if (words >= 10000) {
+    return `${(words / 10000).toFixed(2)} 万字`
+  }
+  return `${words.toLocaleString()} 字`
+}
+
+const yearGroups = computed(() => {
+  const map = new Map<string, BlogArticle[]>()
+  for (const article of articles) {
+    const year = article.date.slice(0, 4) || '未知'
+    if (!map.has(year)) map.set(year, [])
+    map.get(year)!.push(article)
+  }
+
+  return Array.from(map.entries()).map(([year, items]) => {
+    const totalWords = items.reduce((sum, item) => sum + item.wordCount, 0)
+    return {
+      year,
+      items,
+      wordsText: formatYearWords(totalWords)
+    }
+  })
+})
 </script>
 
 <template>
-  <div class="space-y-6">
-    <section class="glass-panel rounded-[2rem] p-6">
-      <p class="muted text-sm">Archive</p>
-      <h1 class="mt-2 text-4xl font-black">归档</h1>
-      <p class="muted mt-3">按时间查看文章沉淀。</p>
-    </section>
+  <div class="archive-page">
+    <section
+      v-for="group in yearGroups"
+      :key="group.year"
+      class="archive-year-group"
+      :aria-label="`${group.year} 年文章归档`"
+    >
+      <div class="archive-year-bar">
+        <h2 class="archive-year-pill">
+          <i aria-hidden="true" />
+          {{ group.year }} 年
+        </h2>
+        <span class="archive-year-stats">{{ group.wordsText }} · {{ group.items.length }} 篇</span>
+      </div>
 
-    <section class="grid gap-6 lg:grid-cols-[0.7fr_1.3fr]">
-      <div class="glass-panel rounded-[2rem] p-6">
-        <CalendarDays class="text-primary-strong" :size="26" />
-        <div v-for="group in archiveGroups" :key="group.year" class="mt-6">
-          <h2 class="text-2xl font-black">{{ group.year }}</h2>
-          <div class="mt-3 grid gap-2">
-            <div v-for="month in group.months" :key="month.name" class="flex items-center justify-between rounded-2xl bg-white/60 px-4 py-3 text-sm">
-              <span>{{ month.name }}</span>
-              <span class="muted">{{ month.count }} 篇</span>
+      <ul class="archive-list">
+        <li v-for="article in group.items" :key="article.id">
+          <NuxtLink :to="`/library/${article.slug}`" class="archive-row">
+            <!-- 左侧独立日期 div -->
+            <div class="archive-date-box">
+              <time :datetime="article.date">{{ article.date }}</time>
             </div>
-          </div>
-        </div>
-      </div>
-      <div class="space-y-4">
-        <NuxtLink v-for="article in articles" :key="article.id" :to="`/library/${article.slug}`" class="soft-card block rounded-[1.75rem] p-5">
-          <p class="muted text-sm">{{ article.date }} · {{ article.category }}</p>
-          <h2 class="mt-2 text-xl font-bold">{{ article.title }}</h2>
-          <p class="muted mt-2 leading-7">{{ article.summary }}</p>
-        </NuxtLink>
-      </div>
+
+            <!-- 右侧独立内容 div -->
+            <div class="archive-content-box">
+              <div class="archive-row-main">
+                <span class="archive-row-icon" :title="article.category" aria-hidden="true">
+                  <component :is="getCategoryIcon(article.category)" :size="13.5" :stroke-width="1.8" />
+                </span>
+                <span class="archive-row-title">{{ article.title }}</span>
+              </div>
+
+              <div class="archive-row-tags">
+                <span class="archive-row-hash" aria-hidden="true">#</span>
+                <span>{{ article.tags.slice(0, 3).join(' ') }}</span>
+              </div>
+            </div>
+          </NuxtLink>
+        </li>
+      </ul>
     </section>
   </div>
 </template>

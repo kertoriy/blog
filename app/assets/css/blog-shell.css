@@ -1,0 +1,1046 @@
+@reference "./main.css";
+@layer theme, base, components, utilities;
+
+/* 三独立圆角卡片布局：左侧菜单卡片 + 右上 Header 卡片 + 右下 Content 卡片，统一 22px 圆角与 4px 间距 */
+@layer components {
+.blog-shell {
+  display: grid;
+  grid-template-columns: 196px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 4px;
+  height: 100dvh;
+  padding: 4px;
+  overflow: hidden;
+  color: var(--ui-ink);
+  background: var(--ui-chrome);
+  transition: grid-template-columns 260ms cubic-bezier(0.22, 1, 0.36, 1), background-color 240ms ease;
+}
+
+/* 收起为左侧极简图标竖栏，与右侧活动条视觉对称，仅隐藏次要文字信息 */
+.blog-shell.is-collapsed {
+  grid-template-columns: 48px minmax(0, 1fr);
+}
+
+/* 卡片 1：左侧独立菜单区块 */
+.blog-rail {
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-panel);
+  background: var(--ui-canvas);
+  box-shadow: var(--ui-shadow-sheet);
+  overflow: hidden;
+  transition: border-color 240ms ease, background-color 240ms ease;
+}
+
+.blog-sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 8px 9px 12px;
+  gap: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  transition: padding 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.blog-sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+.blog-sidebar.is-collapsed {
+  padding: 8px 5px 10px;
+}
+
+/* 精致轻薄单行侧栏品牌头（Logo 与菜单图标严格统一为 30×30px 垂直轴线对齐） */
+.blog-rail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  height: 34px;
+  padding: 0 2px;
+  transition: padding 240ms cubic-bezier(0.22, 1, 0.36, 1), gap 240ms ease;
+}
+
+.blog-sidebar.is-collapsed .blog-rail-header {
+  flex-direction: column;
+  justify-content: center;
+  height: auto;
+  gap: 8px;
+  padding: 2px 0 4px;
+}
+
+.blog-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  transition: gap 220ms ease;
+}
+
+.blog-sidebar.is-collapsed .blog-brand {
+  gap: 0;
+}
+
+.blog-brand-logo {
+  display: block;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--ui-border);
+  border-radius: 9px;
+  object-fit: cover;
+  transition: transform 180ms ease, border-color 200ms ease;
+}
+
+.blog-brand:hover .blog-brand-logo {
+  transform: scale(1.03);
+  border-color: var(--ui-border-strong);
+}
+
+.blog-brand-name {
+  font-size: 14.5px;
+  font-weight: 650;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  color: var(--ui-ink);
+  white-space: nowrap;
+  max-width: 130px;
+  overflow: hidden;
+  padding-block: 1px;
+  transition: max-width 240ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease;
+}
+
+.blog-collapse-btn {
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.blog-sidebar.is-collapsed .blog-brand-name {
+  max-width: 0;
+  opacity: 0;
+}
+
+.blog-sidebar.is-collapsed .blog-collapse-btn {
+  width: 30px;
+  height: 30px;
+}
+
+.blog-icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--ui-border);
+  border-radius: 9px;
+  background: var(--ui-surface-subtle);
+  color: var(--ui-ink-secondary);
+  cursor: pointer;
+  flex: none;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.blog-icon-btn:hover {
+  border-color: var(--ui-border-strong);
+  background: var(--ui-nav-active-bg);
+  color: var(--ui-ink);
+}
+
+/* 蓝图虚线贯通菜单：沉底置于亮暗色切换上方，释放顶部品牌区呼吸感 */
+.blog-nav-group {
+  display: grid;
+  gap: 11px;
+  margin-top: auto;
+  padding-bottom: 8px;
+}
+
+.blog-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  padding: 2px 2px;
+  border: 0;
+  background: transparent;
+  color: var(--ui-ink-secondary);
+  text-align: start;
+  cursor: pointer;
+  overflow: hidden;
+  transition: color 140ms ease;
+}
+
+/* 左侧 30×30 虚线外框图标卡（与上方 30×30 Logo 精准垂直对齐） */
+.blog-nav-icon {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border: 1px dashed var(--ui-border-strong);
+  border-radius: 9px;
+  background: var(--ui-surface-subtle);
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
+
+.blog-nav-icon-core {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--ui-canvas);
+  color: var(--ui-ink-muted);
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+/* 右侧双行信息区：紧贴图标卡右侧，由虚线中轴从图标框无缝延展穿过主标题与副信息之间 */
+.blog-nav-copy {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  max-width: 150px;
+  overflow: hidden;
+  opacity: 1;
+  transition:
+    flex-basis 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    max-width 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 160ms ease;
+}
+
+.blog-nav-label {
+  padding: 0 4px 2px 9px;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ui-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 140ms ease;
+}
+
+/* 从虚线图标卡右缘延续而出的水平虚线分割线 */
+.blog-nav-divider {
+  display: block;
+  width: 100%;
+  height: 0;
+  border-top: 1px dashed color-mix(in srgb, var(--ui-border-strong) 82%, transparent);
+  transition: border-color 180ms ease;
+}
+
+.blog-nav-sub {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2.5px 4px 0 9px;
+  font-size: 10px;
+  font-weight: 450;
+  line-height: 1.2;
+  color: var(--ui-ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+}
+
+.blog-nav-sub-sep {
+  width: 1px;
+  height: 8px;
+  background: var(--ui-border-strong);
+  flex: none;
+}
+
+/* 激活态：虚线图标卡点亮品牌主色紫，延伸虚线同步染上紫韵 */
+.blog-nav-item.is-active .blog-nav-icon {
+  border-color: var(--ui-accent);
+  background: color-mix(in srgb, var(--ui-accent) 16%, var(--ui-canvas));
+}
+
+.blog-nav-item.is-active .blog-nav-icon-core {
+  background: var(--ui-accent);
+  color: #ffffff;
+}
+
+.blog-nav-item.is-active .blog-nav-divider {
+  border-top-color: color-mix(in srgb, var(--ui-accent) 60%, transparent);
+}
+
+.blog-nav-item.is-active .blog-nav-label {
+  font-weight: 650;
+  color: var(--ui-ink);
+}
+
+.blog-nav-item.is-active .blog-nav-sub {
+  color: var(--ui-accent-ink);
+}
+
+/* 收起态：右侧双行与延展虚线平滑收起，左侧 30×30 虚线图标卡与顶部 30×30 Logo 严格同轴居中 */
+.blog-sidebar.is-collapsed .blog-nav-group {
+  gap: 9px;
+}
+
+.blog-sidebar.is-collapsed .blog-nav-item {
+  width: 34px;
+  height: 32px;
+  padding: 0;
+  justify-content: center;
+}
+
+.blog-sidebar.is-collapsed .blog-nav-copy {
+  flex: 0 0 0px;
+  max-width: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.blog-sidebar-footer {
+  display: grid;
+  gap: 6px;
+  margin-top: 0;
+  padding-top: 4px;
+}
+
+.blog-sidebar.is-collapsed .blog-sidebar-footer {
+  justify-items: center;
+  gap: 0;
+}
+
+/* 收起模式下的精简圆形亮/暗色切换按钮 */
+.blog-theme-compact {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--ui-border);
+  border-radius: 999px;
+  background: var(--ui-surface-subtle);
+  color: var(--ui-accent-ink);
+  cursor: pointer;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.blog-theme-compact:hover {
+  border-color: color-mix(in srgb, var(--ui-accent) 38%, var(--ui-border));
+  background: var(--ui-accent-soft);
+  transform: scale(1.03);
+}
+
+/* 底部紧凑双段式全圆角亮色/暗色滑动开关 */
+.blog-theme-segmented {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  height: 30px;
+  padding: 2px;
+  border: 1px solid var(--ui-border);
+  border-radius: 999px;
+  background: var(--ui-surface-subtle);
+}
+
+.blog-theme-thumb {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  width: calc(50% - 2px);
+  border-radius: 999px;
+  background: var(--ui-canvas);
+  border: 1px solid var(--ui-border);
+  box-shadow: var(--ui-shadow-control);
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.blog-theme-thumb.is-dark {
+  transform: translateX(100%);
+  background: var(--ui-surface-hover);
+  border-color: var(--ui-border-strong);
+}
+
+.blog-theme-option {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ui-ink-muted);
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+
+.blog-theme-option:hover {
+  color: var(--ui-ink-secondary);
+}
+
+.blog-theme-option.is-active {
+  color: var(--ui-ink);
+  font-weight: 550;
+}
+
+.blog-theme-option.is-active svg {
+  color: var(--ui-accent-ink);
+}
+
+.blog-sidebar-meta {
+  display: grid;
+  gap: 1px;
+  justify-items: center;
+  padding: 1px 4px 0;
+  max-height: 40px;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-height 220ms cubic-bezier(0.22, 1, 0.36, 1), opacity 160ms ease, padding 220ms ease;
+}
+
+.blog-sidebar.is-collapsed .blog-sidebar-meta {
+  max-height: 0;
+  padding: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.blog-sidebar-sign {
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.35;
+  color: var(--ui-ink-muted);
+}
+
+.blog-sidebar-icp {
+  font-size: 10px;
+  line-height: 1.35;
+  color: var(--ui-ink-muted);
+  transition: color 140ms ease;
+}
+
+.blog-sidebar-icp:hover {
+  color: var(--ui-accent-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* 右侧 2×2 独立圆角卡片网格：Header + 回到顶部 / Content + 外置 1:1 滚动条 */
+.blog-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  grid-template-rows: 44px minmax(0, 1fr);
+  gap: 4px;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+/* 卡片 2：独立 Header 卡片 */
+.blog-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  height: 44px;
+  padding: 0 7px 0 18px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-panel);
+  background: var(--ui-canvas);
+  box-shadow: var(--ui-shadow-sheet);
+  transition: background-color 240ms ease, border-color 240ms ease;
+}
+
+/* Header 右侧独立圆形「回到顶部」按钮卡片（中性灰克制进度环，无发光与花哨悬停） */
+.blog-top-btn {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--ui-border);
+  border-radius: 999px;
+  background: var(--ui-canvas);
+  color: var(--ui-ink-muted);
+  box-shadow: var(--ui-shadow-sheet);
+  cursor: pointer;
+  overflow: hidden;
+  transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease;
+}
+
+.blog-top-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+
+.blog-top-ring-track {
+  fill: none;
+  stroke: var(--ui-scrollbar-track-edge);
+  stroke-width: 1.5;
+  opacity: 0.7;
+  transition: stroke 200ms ease;
+}
+
+.blog-top-ring-bar {
+  fill: none;
+  stroke: var(--ui-scrollbar-ring);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 120ms linear, stroke 200ms ease;
+}
+
+.blog-top-arrow {
+  position: relative;
+  z-index: 1;
+}
+
+.blog-top-btn.is-scrolled {
+  color: var(--ui-ink-secondary);
+}
+
+.blog-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.blog-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  font-size: 13px;
+  color: var(--ui-ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.blog-breadcrumb-root {
+  color: var(--ui-ink-muted);
+  transition: color 130ms ease;
+}
+
+.blog-breadcrumb-root:hover {
+  color: var(--ui-ink);
+}
+
+.blog-breadcrumb-sep {
+  color: var(--ui-border-strong);
+  user-select: none;
+}
+
+.blog-breadcrumb-current {
+  color: var(--ui-ink);
+  font-weight: 550;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.blog-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+
+/* 浏览器实时性能独立胶囊（FPS 与 内存 拆分展示） */
+.blog-telemetry-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  padding: 0 11px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--ui-surface-subtle);
+  color: var(--ui-ink-secondary);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.blog-telemetry-pill svg {
+  color: var(--ui-ink-muted);
+  flex: none;
+}
+
+.blog-telemetry-fps .blog-fps-icon {
+  color: #16a34a;
+}
+
+.blog-telemetry-fps .blog-fps-icon.is-warn {
+  color: #d97706;
+}
+
+.blog-telemetry-fps .blog-fps-icon.is-low {
+  color: #dc2626;
+}
+
+.blog-fps-num {
+  font-weight: 650;
+  color: var(--ui-ink);
+}
+
+.blog-fps-unit {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--ui-ink-muted);
+  margin-left: -1px;
+}
+
+/* Header 右侧全圆角同心搜索胶囊 */
+.blog-header-search {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: clamp(190px, 21vw, 256px);
+  height: 30px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--ui-surface-subtle);
+  transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease, width 180ms ease;
+}
+
+.blog-header-search:hover {
+  background: var(--ui-surface-hover);
+}
+
+.blog-header-search:focus-within {
+  width: clamp(210px, 24vw, 286px);
+  border-color: var(--ui-border-strong);
+  background: var(--ui-canvas);
+  box-shadow: 0 0 0 3px var(--ui-hover-ring-fill), 0 0 0 4px var(--ui-hover-ring-edge);
+}
+
+.blog-header-search-icon {
+  color: var(--ui-ink-muted);
+  flex: none;
+}
+
+.blog-header-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ui-ink);
+  font-size: 12.5px;
+  line-height: 1;
+  outline: none;
+}
+
+.blog-header-search input::placeholder {
+  color: var(--ui-ink-muted);
+}
+
+.blog-header-search input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+.blog-header-search-clear {
+  display: inline-grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ui-pill-active);
+  color: var(--ui-ink-muted);
+  cursor: pointer;
+  flex: none;
+}
+
+.blog-header-search-clear:hover {
+  color: var(--ui-ink);
+}
+
+/* 卡片 3：独立 Content 卡片（隐藏内部原生滚动条，交给外置 1:1 轨道） */
+.blog-sheet {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-panel);
+  background: var(--ui-canvas);
+  box-shadow: var(--ui-shadow-sheet);
+  scrollbar-width: none;
+  transition: background-color 240ms ease, border-color 240ms ease;
+}
+
+.blog-sheet::-webkit-scrollbar {
+  display: none;
+}
+
+.blog-sheet.is-dragging {
+  scroll-behavior: auto !important;
+  user-select: none;
+}
+
+/* 全屏初始化 / 整页加载居中转圈圈 */
+.app-fullscreen-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  background: var(--ui-chrome);
+}
+
+/* 内容卡片局部居中转圈圈（零布局占位，仅覆盖 .blog-sheet 可视区） */
+.blog-sheet-spinner-anchor {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  height: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.blog-sheet-spinner-overlay {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: calc(100dvh - 58px);
+  background: color-mix(in srgb, var(--ui-canvas) 74%, transparent);
+  backdrop-filter: blur(2px);
+}
+
+/* 统一极简圆环转圈动画 */
+.app-loader-ring {
+  width: 30px;
+  height: 30px;
+  border: 2.5px solid var(--ui-border-strong);
+  border-top-color: var(--ui-accent);
+  border-right-color: color-mix(in srgb, var(--ui-accent) 32%, transparent);
+  border-radius: 999px;
+  animation: blog-spin 680ms cubic-bezier(0.42, 0.14, 0.58, 0.86) infinite;
+}
+
+.app-loader-ring.is-lg {
+  width: 38px;
+  height: 38px;
+  border-width: 3px;
+}
+
+@keyframes blog-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loader-fade-enter-active,
+.loader-fade-leave-active {
+  transition: opacity 200ms ease;
+}
+
+.loader-fade-enter-from,
+.loader-fade-leave-to {
+  opacity: 0;
+}
+
+/* 卡片 4：Content 外置 1:1 调节器风格滚动竖轨（背后细线轨道 + 悬浮调节器滑块 + 底部读数） */
+.blog-scroll-rail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 44px;
+  height: 100%;
+  min-height: 0;
+  padding: 16px 0 11px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-panel);
+  background: var(--ui-canvas);
+  box-shadow: var(--ui-shadow-sheet);
+  transition: background-color 240ms ease, border-color 240ms ease;
+}
+
+.blog-scroll-track {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  cursor: pointer;
+}
+
+/* 背后精简细线轨道（营造硬件调节器 / Fader 的滑动质感） */
+.blog-scroll-guide {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  border-radius: 999px;
+  background: var(--ui-scrollbar-line);
+  transform: translateX(-50%);
+  pointer-events: none;
+  transition: background-color 220ms ease;
+}
+
+.blog-scroll-guide::before,
+.blog-scroll-guide::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--ui-scrollbar-line);
+  transform: translateX(-50%);
+  transition: background-color 220ms ease;
+}
+
+.blog-scroll-guide::before {
+  top: -2px;
+}
+
+.blog-scroll-guide::after {
+  bottom: -2px;
+}
+
+.blog-scroll-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  border-radius: 999px;
+  background: var(--ui-scrollbar-line-fill);
+  pointer-events: none;
+}
+
+/* 骑跨在细线之上的中性灰调节器滑块（无发光、无多余 hover 跳动） */
+.blog-scroll-thumb {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 12px;
+  margin-left: -6px;
+  border: 1px solid var(--ui-scrollbar-thumb-border);
+  border-radius: 999px;
+  background: var(--ui-scrollbar-thumb-bg);
+  cursor: grab;
+  touch-action: none;
+  transition: border-color 180ms ease, background-color 180ms ease, opacity 180ms ease;
+}
+
+.blog-scroll-grip {
+  width: 4px;
+  height: 7px;
+  border-top: 1.5px solid var(--ui-scrollbar-thumb-grip);
+  border-bottom: 1.5px solid var(--ui-scrollbar-thumb-grip);
+  pointer-events: none;
+}
+
+.blog-scroll-thumb.is-dragging {
+  cursor: grabbing;
+  background: var(--ui-nav-active-bg);
+}
+
+.blog-scroll-percent {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 550;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ui-ink-muted);
+  user-select: none;
+  transition: color 180ms ease;
+}
+
+.blog-scroll-rail.is-active-scroll .blog-scroll-percent {
+  color: var(--ui-accent-ink);
+}
+
+.blog-scroll-rail.is-inactive .blog-scroll-track {
+  cursor: default;
+}
+
+.blog-scroll-rail.is-inactive .blog-scroll-thumb {
+  opacity: 0.32;
+  cursor: default;
+  pointer-events: none;
+}
+
+.blog-content {
+  width: 100%;
+  min-height: 100%;
+  padding: 18px 20px 28px;
+  container: blog-content / inline-size;
+}
+
+/* 仅正文内容区平滑入场/退场过渡（短退场 + 柔和入场，避免明显空白闪烁） */
+.page-content-enter-active {
+  transition: opacity 210ms cubic-bezier(0.22, 1, 0.36, 1), transform 210ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.page-content-leave-active {
+  transition: opacity 95ms ease-out;
+}
+
+.page-content-enter-from {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.page-content-leave-to {
+  opacity: 0;
+}
+
+.blog-mobile-trigger,
+.blog-drawer {
+  display: none;
+}
+
+.blog-skip {
+  position: fixed;
+  z-index: 50;
+  inset: 10px auto auto 10px;
+  padding: 7px 12px;
+  border: 1px solid var(--ui-border);
+  border-radius: 10px;
+  color: var(--ui-ink);
+  background: var(--ui-canvas);
+  box-shadow: var(--ui-shadow-float);
+  transform: translateY(calc(-100% - 16px));
+}
+
+.blog-skip:focus {
+  transform: none;
+}
+
+.blog-shell :where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--ui-accent) 55%, transparent);
+  outline-offset: 2px;
+}
+
+/* 胶囊式搜索框与编辑框由外层容器呈现聚焦环，内层 input 不再重复绘制矩形焦点外框 */
+.blog-shell :where(.blog-header-search input, .sites-search-input, .library-search-input, .trash-editor-input):focus-visible {
+  outline: none;
+}
+
+@media (width < 58rem) {
+  .blog-telemetry-mem {
+    display: none;
+  }
+}
+
+@media (width < 44rem) {
+  .blog-telemetry-pill {
+    display: none;
+  }
+
+  .blog-header-search {
+    width: 150px;
+  }
+}
+
+/* 移动端自适应 */
+@media (width < 52rem) {
+  html {
+    scrollbar-gutter: stable;
+  }
+
+  .blog-shell,
+  .blog-shell.is-collapsed {
+    display: block;
+    height: auto;
+    min-height: 100dvh;
+    padding: 4px;
+    overflow: visible;
+  }
+
+  .blog-rail,
+  .blog-desktop-toggle {
+    display: none;
+  }
+
+  .blog-mobile-trigger {
+    display: inline-grid;
+  }
+
+  .blog-workspace {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100dvh - 8px);
+  }
+
+  .blog-top-btn,
+  .blog-scroll-rail {
+    display: none;
+  }
+
+  .blog-topbar {
+    position: sticky;
+    top: 4px;
+    z-index: 20;
+    height: 44px;
+    padding: 0 7px 0 10px;
+  }
+
+  .blog-sheet {
+    overflow: visible;
+    scrollbar-width: auto;
+  }
+
+  .blog-content {
+    padding: 14px 12px 24px;
+  }
+
+  .blog-drawer[open] {
+    display: block;
+    position: fixed;
+    inset: 4px auto 4px 4px;
+    width: min(268px, 84vw);
+    height: calc(100dvh - 8px);
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--ui-radius-panel);
+    color: var(--ui-ink);
+    background: var(--ui-canvas);
+    box-shadow: 0 14px 36px rgb(15 23 42 / 0.14);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .blog-drawer::backdrop {
+    background: rgb(15 23 42 / 0.25);
+    backdrop-filter: blur(2px);
+  }
+
+  .blog-drawer .blog-sidebar {
+    width: 100%;
+  }
+
+  body:has(.blog-drawer[open]) {
+    overflow: hidden;
+  }
+}
+}

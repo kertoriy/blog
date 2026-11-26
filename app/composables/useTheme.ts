@@ -1,30 +1,37 @@
-export type BlogTheme = 'anime' | 'classic'
-
-const theme = ref<BlogTheme>('anime')
+export type BlogTheme = 'light' | 'dark'
 
 export const useTheme = () => {
+  const theme = useState<BlogTheme>('ker-edit-theme', () => 'dark')
+
+  const applyTheme = (nextTheme: BlogTheme) => {
+    if (!import.meta.client) return
+    const root = document.documentElement
+    root.setAttribute('data-theme', nextTheme)
+    root.classList.toggle('dark', nextTheme === 'dark')
+    root.style.colorScheme = nextTheme
+  }
+
   const setTheme = (nextTheme: BlogTheme) => {
     theme.value = nextTheme
+    applyTheme(nextTheme)
 
     if (import.meta.client) {
-      document.documentElement.dataset.theme = nextTheme
       localStorage.setItem('ker-edit-theme', nextTheme)
     }
   }
 
   const toggleTheme = () => {
-    setTheme(theme.value === 'anime' ? 'classic' : 'anime')
+    setTheme(theme.value === 'dark' ? 'light' : 'dark')
   }
 
   onMounted(() => {
-    const savedTheme = localStorage.getItem('ker-edit-theme') as BlogTheme | null
-
-    if (savedTheme === 'anime' || savedTheme === 'classic') {
-      setTheme(savedTheme)
-      return
+    const saved = localStorage.getItem('ker-edit-theme')
+    if (saved === 'light' || saved === 'dark') {
+      setTheme(saved)
     }
-
-    setTheme(theme.value)
+    else {
+      applyTheme(theme.value)
+    }
   })
 
   return {

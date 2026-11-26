@@ -1,0 +1,202 @@
+@reference "./main.css";
+@layer theme, base, components, utilities;
+
+/* 碎碎念（单中轴居中便签流）：居中吸顶标签滑块栏 + 居中时间胶囊 + 虚线点阵便签卡 + 右下角标签排版水印 */
+@layer components {
+  .notes-page {
+    @apply flex w-full flex-col gap-3 py-1;
+  }
+
+  /* 吸顶固定标签筛选栏（覆盖内容区顶部与左右内边距，滚动时无缝贴合且带磨砂底） */
+  .notes-sticky-bar {
+    @apply sticky top-0 z-15 -mx-5 -mt-[22px] flex flex-col border-b border-transparent px-5 pt-[22px] pb-3 backdrop-blur-md transition-[border-color,background-color] duration-150;
+    background-color: color-mix(in srgb, var(--ui-canvas) 92%, transparent);
+  }
+
+  .notes-sticky-bar.is-stuck {
+    border-bottom-color: color-mix(in srgb, var(--ui-border) 88%, transparent);
+  }
+
+  /* 居中单行标签栏，与下方中轴时间胶囊和便签卡保持同一视觉轴线 */
+  .notes-toolbar {
+    @apply flex w-full items-center justify-center;
+  }
+
+  .notes-tabs {
+    @apply relative inline-flex flex-wrap items-center gap-0.5 rounded-full border border-border/75 p-[3px];
+    background-color: var(--ui-bar-bg);
+  }
+
+  /* 悬停/选中平滑跟随胶囊滑块 */
+  .notes-tab-glider {
+    @apply pointer-events-none absolute top-0 left-0 z-0 rounded-full bg-canvas;
+    box-shadow: var(--ui-shadow-control);
+    will-change: transform, width, height;
+  }
+
+  .notes-tab-glider.is-animated {
+    transition:
+      transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+      width 240ms cubic-bezier(0.22, 1, 0.36, 1),
+      height 240ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 180ms ease;
+  }
+
+  .notes-tab {
+    @apply relative z-10 inline-flex h-[30px] cursor-pointer items-center justify-center rounded-full border border-transparent px-3.5 text-[12.5px] font-medium text-ink-secondary transition-colors duration-150;
+    background-color: transparent;
+  }
+
+  .notes-tab:hover,
+  .notes-tab.is-hovered {
+    color: var(--ui-ink);
+  }
+
+  .notes-tab.is-active {
+    background-color: var(--ui-canvas);
+    color: var(--ui-accent-ink);
+    font-weight: 600;
+    box-shadow: var(--ui-shadow-control);
+  }
+
+  /* 滑块就绪后由 .notes-tab-glider 统一绘制背景，避免与静态激活底重叠 */
+  .notes-tabs.has-glider .notes-tab.is-active {
+    background-color: transparent;
+    box-shadow: none;
+  }
+
+  .notes-tabs.has-glider .notes-tab.is-active:hover,
+  .notes-tabs.has-glider .notes-tab.is-active.is-hovered {
+    color: var(--ui-accent-ink);
+  }
+
+  /* =========================================================
+     单中轴居中碎碎念流（无头像昵称、无连接线、宽屏克制居中）
+     ========================================================= */
+  .chat-feed {
+    @apply mx-auto my-0 flex w-full max-w-[740px] list-none flex-col gap-7 pt-2 pb-2 pl-0;
+  }
+
+  .chat-entry {
+    @apply flex w-full flex-col items-center gap-2.5;
+  }
+
+  /* 居中时间胶囊行 */
+  .chat-meta-row {
+    @apply flex items-center justify-center;
+  }
+
+  .chat-time-pill {
+    @apply inline-flex h-[24px] items-center rounded-full border border-border/80 px-3 font-mono text-[11.5px] font-medium leading-none tabular-nums text-ink-muted transition-[border-color,color] duration-150;
+    background-color: var(--ui-nav-active-bg);
+  }
+
+  .chat-entry:hover .chat-time-pill {
+    border-color: var(--ui-border-strong);
+    color: var(--ui-ink-secondary);
+  }
+
+  /* 居中对称圆角虚线点阵便签卡（内置标签低透明大字背景水印 + 极淡角隅氛围光） */
+  .chat-bubble {
+    --tag-tint: var(--ui-accent);
+    @apply relative w-full overflow-hidden rounded-[16px] border border-dashed px-5 py-4.5 text-left transition-[border-color,background-color,box-shadow] duration-200 ease-out;
+    border-color: color-mix(in srgb, var(--ui-border-strong) 88%, transparent);
+    background-color: color-mix(in srgb, var(--ui-bar-bg) 52%, var(--ui-canvas));
+    background-image:
+      radial-gradient(color-mix(in srgb, var(--ui-ink) 7%, transparent) 1px, transparent 1px),
+      radial-gradient(circle at 96% 96%, color-mix(in srgb, var(--tag-tint) 9%, transparent) 0%, transparent 56%);
+    background-size: 16px 16px, 100% 100%;
+    background-position: 8px 8px, center;
+  }
+
+  .chat-bubble.is-tag-thought {
+    --tag-tint: var(--ui-accent);
+  }
+
+  .chat-bubble.is-tag-tinker {
+    --tag-tint: #2563eb;
+  }
+
+  .chat-bubble.is-tag-idea {
+    --tag-tint: #d97706;
+  }
+
+  .chat-bubble.is-tag-daily {
+    --tag-tint: #059669;
+  }
+
+  :root[data-theme="dark"] .chat-bubble {
+    background-color: color-mix(in srgb, var(--ui-surface-subtle) 62%, var(--ui-canvas));
+    background-image:
+      radial-gradient(color-mix(in srgb, var(--ui-ink) 6%, transparent) 1px, transparent 1px),
+      radial-gradient(circle at 96% 96%, color-mix(in srgb, var(--tag-tint) 11%, transparent) 0%, transparent 58%);
+  }
+
+  :root[data-theme="dark"] .chat-bubble.is-tag-tinker {
+    --tag-tint: #60a5fa;
+  }
+
+  :root[data-theme="dark"] .chat-bubble.is-tag-idea {
+    --tag-tint: #fbbf24;
+  }
+
+  :root[data-theme="dark"] .chat-bubble.is-tag-daily {
+    --tag-tint: #34d399;
+  }
+
+  .chat-entry:hover .chat-bubble {
+    border-color: color-mix(in srgb, var(--tag-tint) 46%, var(--ui-border-strong));
+    background-color: var(--ui-canvas);
+    box-shadow: 0 6px 18px -10px color-mix(in srgb, var(--tag-tint) 22%, transparent);
+  }
+
+  /* 标签背景大字水印（位于卡片右下角，文字之下，克制低透明不干扰阅读） */
+  .chat-tag-watermark {
+    @apply pointer-events-none absolute right-4 bottom-2 z-0 select-none font-sans text-[clamp(38px,5.2cqi,54px)] font-extrabold leading-none tracking-[0.04em] whitespace-nowrap transition-opacity duration-200;
+    color: var(--tag-tint);
+    opacity: 0.1;
+  }
+
+  :root[data-theme="dark"] .chat-tag-watermark {
+    opacity: 0.12;
+  }
+
+  .chat-entry:hover .chat-tag-watermark {
+    opacity: 0.16;
+  }
+
+  .chat-tag-watermark-hash {
+    @apply mr-0.5 text-[0.74em] font-bold opacity-75;
+  }
+
+  /* 纯文本正文：置于水印之上，按空行拆段并控制紧凑段距，不解析 Markdown */
+  .chat-body {
+    @apply relative z-10 flex flex-col gap-2.5;
+  }
+
+  .chat-text {
+    @apply m-0 text-[15.5px] leading-[1.8] whitespace-pre-line break-words text-ink;
+  }
+
+  /* 空状态 */
+  .notes-empty {
+    @apply mx-auto flex w-full max-w-[740px] flex-col items-center justify-center rounded-card border border-dashed border-border py-14 text-center;
+    background-color: var(--ui-bar-bg);
+  }
+
+  @media (width < 52rem) {
+    .notes-sticky-bar {
+      top: 52px;
+      margin-inline: -12px;
+      margin-top: -18px;
+      padding-inline: 12px;
+      padding-top: 14px;
+    }
+  }
+
+  @container blog-content (width < 600px) {
+    .chat-bubble {
+      @apply px-4 py-3.5;
+    }
+  }
+}
