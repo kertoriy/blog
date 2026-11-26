@@ -175,9 +175,7 @@ pnpm preview
 
 ---
 
-## 部署
-
-### Docker Compose + Caddy（`https://kertoriy.cn`）
+## 部署（Docker Compose + Caddy）
 
 项目包含多阶段 [Dockerfile](./Dockerfile)（构建静态产物并交由 `caddy:2-alpine` 托管）、[Caddyfile](./Caddyfile) 与 [docker-compose.yml](./docker-compose.yml)：
 
@@ -187,11 +185,7 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
-Caddy 会自动处理 HTTPS 证书签发与续期，证书保存在 `caddy_data` 卷中。
-
-### GitHub Pages
-
-仓库也附带了 [.github/workflows/deploy.yml](./.github/workflows/deploy.yml)，推送到 `main` 分支会自动执行 `pnpm generate` 并发布 `.output/public`。若使用根域名部署，将工作流中的 `NUXT_APP_BASE_URL` 改为 `/` 即可。
+Caddy 会自动处理 `https://kertoriy.cn` 的 HTTPS 证书签发与续期，证书保存在 `caddy_data` 卷中。
 
 ---
 
