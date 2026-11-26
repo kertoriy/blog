@@ -1,5 +1,5 @@
 # 默认监听 :80（本地调试或前置反代模式）
-# 生产环境在 .env 中设置 SITE_ADDRESS=kertoriy.dev 即可由 Caddy 自动签发并续期 Let's Encrypt HTTPS 证书
+# 生产环境在 .env 中设置 SITE_ADDRESS=kertoriy.cn 即可由 Caddy 自动签发并续期 Let's Encrypt HTTPS 证书
 {$SITE_ADDRESS::80} {
 	root * /srv/blog
 	encode zstd gzip
