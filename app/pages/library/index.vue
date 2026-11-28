@@ -10,6 +10,7 @@ import {
   X
 } from 'lucide-vue-next'
 import { articles } from '~/utils/articles'
+import '~/assets/css/library-honeycomb.css'
 
 useSeoMeta({
   title: '文库 · kertoriy 的研发空间',
@@ -39,6 +40,7 @@ const activeCategory = ref('全部内容')
 const selectedTags = ref<string[]>(parseQueryTags(route.query.tag))
 const activeSort = ref<'latest' | 'title'>('latest')
 const filterOpen = ref(false)
+const overlayReady = ref(false)
 
 function focusSearchInput() {
   searchInputRef.value?.focus()
@@ -60,10 +62,19 @@ function resolveCover(cover: string) {
 
 watch(() => route.query.q, (val) => {
   searchQuery.value = typeof val === 'string' ? val : ''
+  if (filterOpen.value) {
+    filterOpen.value = false
+  }
 })
 
 watch(() => route.query.tag, (val) => {
   selectedTags.value = parseQueryTags(val)
+})
+
+watch(() => route.path, (path) => {
+  if (path !== '/library' && filterOpen.value) {
+    filterOpen.value = false
+  }
 })
 
 function clearSearch() {
@@ -100,14 +111,11 @@ function resetAllFilters() {
   }
 }
 
-const activeFilterCount = computed(() => {
-  let count = selectedTags.value.length
-  if (activeCategory.value !== '全部内容') count += 1
-  if (activeSort.value !== 'latest') count += 1
-  return count
-})
-
-const hasActiveFilter = computed(() => activeFilterCount.value > 0)
+const hasActiveFilter = computed(() =>
+  selectedTags.value.length > 0
+  || activeCategory.value !== '全部内容'
+  || activeSort.value !== 'latest'
+)
 const hasVisibleChips = computed(() => activeCategory.value !== '全部内容' || selectedTags.value.length > 0)
 
 const filteredArticles = computed(() => {
@@ -147,14 +155,6 @@ function syncToolbarStuck() {
 
 function toggleFilterDrawer() {
   filterOpen.value = !filterOpen.value
-  if (filterOpen.value && import.meta.client) {
-    if (scrollHost && scrollHost.scrollTop > 24) {
-      scrollHost.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-    else if (!scrollHost && window.scrollY > 24) {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  }
 }
 
 function onDocumentKeydown(e: KeyboardEvent) {
@@ -164,6 +164,7 @@ function onDocumentKeydown(e: KeyboardEvent) {
 }
 
 onMounted(() => {
+  overlayReady.value = true
   const sheet = pageRef.value?.closest('.blog-sheet') as HTMLElement | null
   if (sheet) {
     const overflowY = window.getComputedStyle(sheet).overflowY
@@ -177,7 +178,12 @@ onMounted(() => {
   window.addEventListener('keydown', onDocumentKeydown)
 })
 
+onDeactivated(() => {
+  filterOpen.value = false
+})
+
 onBeforeUnmount(() => {
+  filterOpen.value = false
   scrollHost?.removeEventListener('scroll', syncToolbarStuck)
   if (import.meta.client) {
     window.removeEventListener('scroll', syncToolbarStuck)
@@ -229,12 +235,6 @@ onBeforeUnmount(() => {
         >
           <SlidersHorizontal :size="14" :stroke-width="1.8" aria-hidden="true" />
           <span>筛选</span>
-          <span
-            v-if="hasActiveFilter"
-            class="inline-grid h-[18px] min-w-[18px] place-items-center rounded-full bg-accent px-1 font-mono text-[10.5px] font-semibold leading-none text-white tabular-nums"
-          >
-            {{ activeFilterCount }}
-          </span>
         </button>
       </div>
 
@@ -274,21 +274,25 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <!-- 标签蜂巢筛选面板（点击「筛选」展开/收起，六边形直接点击即筛） -->
-    <Transition name="library-drawer">
-      <LibraryTagHoneycomb
-        v-if="filterOpen"
-        :active-category="activeCategory"
-        :selected-tags="selectedTags"
-        :active-sort="activeSort"
-        :has-active-filter="hasActiveFilter"
-        @toggle-tag="toggleTag"
-        @toggle-category="toggleCategory"
-        @update:sort="activeSort = $event"
-        @reset="resetAllFilters"
-        @close="filterOpen = false"
-      />
-    </Transition>
+    <!-- 整张内容区雾化覆盖式标签蜂巢筛选（Teleport 脱离文档流，零排版干扰） -->
+    <Teleport v-if="overlayReady" to="#blog-sheet-overlay">
+      <Transition name="library-fog">
+        <LibraryTagHoneycomb
+          v-if="filterOpen"
+          :active-category="activeCategory"
+          :selected-tags="selectedTags"
+          :active-sort="activeSort"
+          :has-active-filter="hasActiveFilter"
+          :matched-count="filteredArticles.length"
+          :total-count="articles.length"
+          @toggle-tag="toggleTag"
+          @toggle-category="toggleCategory"
+          @update:sort="activeSort = $event"
+          @reset="resetAllFilters"
+          @close="filterOpen = false"
+        />
+      </Transition>
+    </Teleport>
 
     <!-- 自适应多列上下结构配图文章网格（支持触底滚动加载） -->
     <section aria-label="文章列表">

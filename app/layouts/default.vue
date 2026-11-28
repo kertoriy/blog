@@ -437,6 +437,9 @@ onBeforeUnmount(() => {
         </main>
       </div>
 
+      <!-- 与 .blog-sheet 同网格格位的独立浮层宿主（覆盖整张内容卡片，不干扰正文排版与滚动高度） -->
+      <div id="blog-sheet-overlay" class="blog-sheet-overlay-host" />
+
       <!-- Content 右侧独立 1:1 外置自定义滚动条卡片（支持滚轮与触控板滚动手势） -->
       <div
         class="blog-scroll-rail"

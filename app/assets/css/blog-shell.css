@@ -445,6 +445,8 @@
 
 /* 卡片 2：独立 Header 卡片 */
 .blog-topbar {
+  grid-column: 1;
+  grid-row: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -461,6 +463,8 @@
 
 /* Header 右侧独立圆形「回到顶部」按钮卡片（中性灰克制进度环，无发光与花哨悬停） */
 .blog-top-btn {
+  grid-column: 2;
+  grid-row: 1;
   position: relative;
   display: inline-grid;
   place-items: center;
@@ -673,6 +677,8 @@
 
 /* 卡片 3：独立 Content 卡片（隐藏内部原生滚动条，交给外置 1:1 轨道） */
 .blog-sheet {
+  grid-column: 1;
+  grid-row: 2;
   min-width: 0;
   min-height: 0;
   overflow-y: auto;
@@ -682,6 +688,28 @@
   box-shadow: var(--ui-shadow-sheet);
   scrollbar-width: none;
   transition: background-color 240ms ease, border-color 240ms ease;
+}
+
+/* 与 .blog-sheet 重叠于同一网格单元的浮层宿主：整页雾化面板等通过 Teleport 挂载于此，完全脱离文档流 */
+.blog-sheet-overlay-host {
+  grid-column: 1;
+  grid-row: 2;
+  position: relative;
+  z-index: 30;
+  min-width: 0;
+  min-height: 0;
+  border-radius: var(--ui-radius-panel);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.blog-workspace:has(.library-fog-overlay) .blog-sheet {
+  overflow-y: hidden;
+}
+
+.blog-workspace:has(.library-fog-overlay) .blog-scroll-rail {
+  opacity: 0.42;
+  pointer-events: none;
 }
 
 .blog-sheet::-webkit-scrollbar {
@@ -759,6 +787,8 @@
 
 /* 卡片 4：Content 外置 1:1 调节器风格滚动竖轨（背后细线轨道 + 悬浮调节器滑块 + 底部读数） */
 .blog-scroll-rail {
+  grid-column: 2;
+  grid-row: 2;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -1005,6 +1035,16 @@
   .blog-sheet {
     overflow: visible;
     scrollbar-width: auto;
+  }
+
+  .blog-sheet-overlay-host {
+    position: fixed;
+    inset: 52px 4px 4px 4px;
+    z-index: 35;
+  }
+
+  body:has(.library-fog-overlay) {
+    overflow: hidden;
   }
 
   .blog-content {

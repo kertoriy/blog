@@ -24,6 +24,8 @@ const props = defineProps<{
   selectedTags: string[]
   activeSort: 'latest' | 'title'
   hasActiveFilter: boolean
+  matchedCount: number
+  totalCount: number
 }>()
 
 const emit = defineEmits<{
@@ -116,14 +118,14 @@ const honeycombRows = computed<FilterHexCell[][]>(() => {
     }))
   )
 
-  // 中央主控六边形：未选时展示统计，已选时点击可一键清空筛选
+  // 中央蜂巢标识锚点（纯状态展示，清空操作移至底部便于触达）
   grid[2]![6] = {
     id: 'hub-center',
     kind: 'hub',
-    label: selectedCount.value > 0 ? '清空筛选' : '标签蜂巢',
+    label: '标签蜂巢',
     meta: selectedCount.value > 0 ? `已选 ${selectedCount.value} 项` : `${siteArticleStats.totalTags} 标签`,
     value: '__hub__',
-    icon: selectedCount.value > 0 ? RotateCcw : Hexagon
+    icon: Hexagon
   }
 
   interactiveCells.forEach((cell, idx) => {
@@ -151,22 +153,36 @@ function handleCellClick(cell: FilterHexCell) {
   else if (cell.kind === 'category') {
     emit('toggle-category', cell.value)
   }
-  else if (cell.kind === 'hub' && selectedCount.value > 0) {
-    emit('reset')
-  }
+}
+
+function handleBackdropClick(event: MouseEvent) {
+  const target = event.target as HTMLElement | null
+  if (!target) return
+  if (target.closest('.lib-hex-cell:not(.is-ambient), button, [role="group"], .library-honeycomb-title-wrap')) return
+  emit('close')
 }
 </script>
 
 <template>
-  <section class="library-honeycomb-panel" aria-label="标签蜂巢筛选">
-    <!-- 顶部轻控栏：说明 + 排序切换 + 重置 + 收起 -->
-    <div class="library-honeycomb-head">
+  <div
+    class="library-fog-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-label="标签蜂巢筛选"
+    @click="handleBackdropClick"
+  >
+    <span class="library-fog-aura" aria-hidden="true" />
+
+    <!-- 顶部轻悬浮控制条：直接浮于雾化画布上，无厚重边框盒 -->
+    <div class="library-fog-head">
       <div class="library-honeycomb-title-wrap">
         <span class="library-honeycomb-pill">
           <i aria-hidden="true" />
           标签蜂巢筛选
         </span>
-        <span class="library-honeycomb-hint">点击六边形按标签或分类即时筛选，支持多选</span>
+        <span class="library-fog-match">
+          已匹配 <strong>{{ matchedCount }}</strong> / {{ totalCount }} 篇
+        </span>
       </div>
 
       <div class="library-honeycomb-controls">
@@ -190,31 +206,19 @@ function handleCellClick(cell: FilterHexCell) {
         </div>
 
         <button
-          v-if="hasActiveFilter"
-          type="button"
-          class="library-head-action is-accent"
-          @click="emit('reset')"
-        >
-          <RotateCcw :size="11.5" aria-hidden="true" />
-          <span>重置</span>
-        </button>
-
-        <button
           type="button"
           class="library-head-action"
-          aria-label="收起标签蜂巢筛选"
+          aria-label="关闭标签蜂巢筛选"
           @click="emit('close')"
         >
-          <X :size="12" aria-hidden="true" />
-          <span>收起</span>
+          <X :size="12.5" aria-hidden="true" />
+          <span>关闭</span>
         </button>
       </div>
     </div>
 
-    <!-- 全宽渐隐六边形标签蜂巢舞台 -->
+    <!-- 居中全幅渐隐六边形标签蜂巢舞台 -->
     <div class="library-honeycomb-stage">
-      <span class="library-honeycomb-aura" aria-hidden="true" />
-
       <div class="library-honeycomb-hive" role="group" aria-label="标签与分类蜂巢选择器">
         <div
           v-for="(row, rowIdx) in honeycombRows"
@@ -229,34 +233,40 @@ function handleCellClick(cell: FilterHexCell) {
               aria-hidden="true"
             >
               <svg class="lib-hex-svg" viewBox="0 0 120 138">
-                <path :d="HEX_PATH" class="lib-hex-outer" />
-                <path
-                  :d="HEX_PATH"
-                  class="lib-hex-inner"
-                  transform="translate(60 69) scale(0.915) translate(-60 -69)"
-                />
+                <path :d="HEX_PATH" class="lib-hex-shape" vector-effect="non-scaling-stroke" />
               </svg>
             </div>
 
-            <!-- 可交互六边形筛选节点（标签 / 分类 / 中心主控） -->
+            <!-- 中央蜂巢标识格（静态中性样式，避免与已选紫态混淆） -->
+            <div
+              v-else-if="cell.kind === 'hub'"
+              class="lib-hex-cell is-hub"
+              aria-live="polite"
+            >
+              <svg class="lib-hex-svg" viewBox="0 0 120 138" aria-hidden="true">
+                <path :d="HEX_PATH" class="lib-hex-shape" vector-effect="non-scaling-stroke" />
+              </svg>
+
+              <span class="lib-hex-body">
+                <span class="lib-hex-icon" aria-hidden="true">
+                  <component :is="cell.icon" :size="12.5" :stroke-width="1.8" />
+                </span>
+                <span class="lib-hex-name">{{ cell.label }}</span>
+                <span class="lib-hex-meta">{{ cell.meta }}</span>
+              </span>
+            </div>
+
+            <!-- 可交互六边形筛选节点（标签 / 分类） -->
             <button
               v-else
               type="button"
-              class="lib-hex-cell"
-              :class="{
-                'is-hub': cell.kind === 'hub',
-                'is-selected': isCellSelected(cell)
-              }"
-              :aria-pressed="cell.kind === 'hub' ? undefined : isCellSelected(cell)"
+              class="lib-hex-cell is-selectable"
+              :class="{ 'is-selected': isCellSelected(cell) }"
+              :aria-pressed="isCellSelected(cell)"
               @click="handleCellClick(cell)"
             >
               <svg class="lib-hex-svg" viewBox="0 0 120 138" aria-hidden="true">
-                <path :d="HEX_PATH" class="lib-hex-outer" />
-                <path
-                  :d="HEX_PATH"
-                  class="lib-hex-inner"
-                  transform="translate(60 69) scale(0.915) translate(-60 -69)"
-                />
+                <path :d="HEX_PATH" class="lib-hex-shape" vector-effect="non-scaling-stroke" />
               </svg>
 
               <span class="lib-hex-body">
@@ -272,5 +282,23 @@ function handleCellClick(cell: FilterHexCell) {
         </div>
       </div>
     </div>
-  </section>
+
+    <!-- 底部操作区：清空筛选按钮 + 快捷退出提示 -->
+    <div class="library-fog-footer">
+      <button
+        type="button"
+        class="library-clear-btn"
+        :class="{ 'is-active': hasActiveFilter }"
+        :disabled="!hasActiveFilter"
+        @click="emit('reset')"
+      >
+        <RotateCcw :size="12.5" aria-hidden="true" />
+        <span>清空筛选</span>
+      </button>
+
+      <span class="library-fog-hint" aria-hidden="true">
+        点击空白处或按 <kbd class="library-fog-kbd">Esc</kbd> 返回文库
+      </span>
+    </div>
+  </div>
 </template>
