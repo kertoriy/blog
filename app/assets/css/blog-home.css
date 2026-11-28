@@ -353,10 +353,14 @@
   }
 
   /* =========================================================
-     Section 4：本站技术栈与版本（无厚重边框轻盈网格 + 底部构建注脚）
+     Section 4：本站技术栈与版本
      ========================================================= */
   .blog-stack-section {
     @apply flex w-full flex-col gap-4 px-5 pt-2 pb-10;
+  }
+
+  .blog-site-version {
+    @apply text-xs tabular-nums text-ink-muted;
   }
 
   .blog-stack-grid {
@@ -395,14 +399,6 @@
 
   .blog-stack-role {
     @apply truncate text-[11.5px] leading-snug text-ink-muted;
-  }
-
-  .blog-stack-colophon {
-    @apply flex flex-wrap items-center justify-between gap-2 border-t border-dashed border-border/80 pt-3.5 text-[12px] text-ink-muted;
-  }
-
-  .blog-stack-colophon-meta {
-    @apply font-mono text-[11.5px] text-ink-muted/85;
   }
 
   @media (width < 52rem) {

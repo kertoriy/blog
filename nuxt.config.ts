@@ -2,6 +2,10 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import tailwindcss from '@tailwindcss/vite'
 
+// 站点版本以 README 为准。构建时只提取版本值，避免把整份说明打包进前端。
+const readme = readFileSync(new URL('./README.md', import.meta.url), 'utf8')
+const blogVersion = readme.match(/^<p>博客版本：<code>([^<\r\n]+)<\/code><\/p>/m)?.[1]?.trim() ?? ''
+
 function getMarkdownArticleRoutes(): string[] {
   const articlesDir = join(process.cwd(), 'app/content/articles')
   try {
@@ -23,6 +27,8 @@ function getMarkdownArticleRoutes(): string[] {
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
+  appConfig: { blogVersion },
+  watch: ['../README.md'],
   css: [
     '~/assets/css/main.css',
     '~/assets/css/blog-shell.css',

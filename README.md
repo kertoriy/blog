@@ -6,6 +6,8 @@
 
 <p>个人静态博客源码，基于 Nuxt 4、Vue 3 和 Tailwind CSS v4 编写，使用本地文件维护内容。</p>
 
+<p>博客版本：<code>v0.1.0</code></p>
+
 <p>
   线上地址：<a href="https://kertoriy.cn">https://kertoriy.cn</a>
 </p>

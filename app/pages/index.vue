@@ -11,7 +11,6 @@ import {
   Eye,
   Feather,
   FileText,
-  Layers,
   Tag,
   Type,
   Users,
@@ -30,6 +29,7 @@ useSeoMeta({
 })
 
 const baseURL = useRuntimeConfig().app.baseURL
+const { blogVersion } = useAppConfig()
 const { uptime, views, visitors, ready } = useSiteMetrics()
 const { getArticleReads } = useContentMetrics()
 
@@ -75,8 +75,6 @@ const siteStackItems: SiteStackItem[] = [
   { name: 'Chart.js', version: formatPkgVersion(pkg.dependencies?.['chart.js']), role: '站点数据可视化', logo: 'sites/chartjs.svg' },
   { name: 'Lucide Vue', version: formatPkgVersion(pkg.dependencies?.['lucide-vue-next']), role: '轻量化矢量图标', logo: 'sites/lucide.svg' }
 ]
-
-const vueRouterVersion = formatPkgVersion(pkg.dependencies?.['vue-router'])
 
 function resolveAsset(path: string) {
   return /^https?:\/\//.test(path) ? path : `${baseURL}${path.replace(/^\//, '')}`
@@ -325,16 +323,13 @@ function pad2(n: number) {
 
     <!-- 4. 本站技术栈与版本 -->
     <section id="site-stack" class="blog-stack-section" aria-labelledby="blog-stack-title">
-      <div class="blog-section-bar">
+      <header class="blog-section-bar">
         <h2 id="blog-stack-title" class="blog-pill-label">
           <i aria-hidden="true" />
           本站技术栈与版本
         </h2>
-        <span class="blog-pill-meta">
-          <Layers :size="12" aria-hidden="true" />
-          {{ siteConfig.name }} · {{ formatPkgVersion(pkg.dependencies?.nuxt) }}
-        </span>
-      </div>
+        <small v-if="blogVersion" class="blog-site-version">博客版本 {{ blogVersion }}</small>
+      </header>
 
       <ul class="blog-stack-grid">
         <li v-for="item in siteStackItems" :key="item.name" class="blog-stack-item">
@@ -351,11 +346,6 @@ function pad2(n: number) {
           </div>
         </li>
       </ul>
-
-      <div class="blog-stack-colophon">
-        <span>本地 Markdown / JSON 文件驱动 · 静态预渲染架构</span>
-        <span class="blog-stack-colophon-meta">Vue Router {{ vueRouterVersion }} · pnpm</span>
-      </div>
     </section>
   </div>
 </template>
