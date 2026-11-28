@@ -174,8 +174,7 @@ export const notes: NoteItem[] = Object.entries(noteFileModules)
 export interface AboutProfile {
   greeting: string
   tagline: string
-  birthYear: string
-  codingSince: string
+  birthTag: string
   badges: string[]
 }
 

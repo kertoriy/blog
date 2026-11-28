@@ -37,7 +37,7 @@ import '~/assets/css/blog-about.css'
 
 useSeoMeta({
   title: '关于 · kertoriy 的研发空间',
-  description: '关于 Kertoriy：2002 年出生、2020 开始写代码，涵盖开发设备、喜欢的技术、喜欢的工具、钟爱的模型、喜欢的游戏、INTP 性格以及联系方式。'
+  description: '关于 Kertoriy：02Yer 开发者，涵盖开发设备、喜欢的技术、喜欢的工具、钟爱的模型、喜欢的游戏、INTP 性格以及联系方式。'
 })
 
 const baseURL = useRuntimeConfig().app.baseURL
@@ -254,12 +254,7 @@ onBeforeUnmount(() => {
 
         <div class="about-hero-metrics" aria-label="个人信息">
           <div class="about-hero-metric">
-            <strong>{{ aboutProfile.birthYear }}</strong>
-            <span>年出生</span>
-          </div>
-          <div class="about-hero-metric">
-            <strong>{{ aboutProfile.codingSince }}</strong>
-            <span>开始写代码</span>
+            <strong>{{ aboutProfile.birthTag }}</strong>
           </div>
         </div>
       </div>
