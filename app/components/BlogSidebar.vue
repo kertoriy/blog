@@ -2,6 +2,7 @@
 import {
   Archive,
   BookOpen,
+  CalendarCheck2,
   Compass,
   Feather,
   HeartHandshake,
@@ -40,6 +41,7 @@ const navItems = [
   { label: '归档', sub: 'Archive', meta: latestYear, to: '/archive', icon: Archive },
   { label: '常用网站', sub: 'Sites', meta: `${siteLinks.length} 项`, to: '/sites', icon: Compass },
   { label: '友链', sub: 'Friends', meta: `${friends.length} 位`, to: '/friends', icon: HeartHandshake },
+  { label: '作息打卡', sub: 'Routine', meta: '日常', to: '/routine', icon: CalendarCheck2 },
   { label: '赛博情绪垃圾桶', sub: 'Mood', meta: '宣泄', to: '/trash', icon: Trash2 },
   { label: '关于', sub: 'About', meta: '简介', to: '/about', icon: Feather }
 ]

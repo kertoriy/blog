@@ -1,0 +1,445 @@
+{
+  "meta": {
+    "title": "作息打卡",
+    "subtitle": "中间时间轴对照：左侧计划时间，右侧实际时间",
+    "targetWakeup": "07:30",
+    "targetBedtime": "23:00",
+    "targetSleepHours": 8.5,
+    "targetDeepWorkHours": 6.5,
+    "streakDays": 42
+  },
+  "plans": [
+    {
+      "id": "morning-routine",
+      "time": "07:30 — 09:00",
+      "start": "07:30",
+      "end": "09:00",
+      "title": "起床、洗漱、晨间散步、早餐",
+      "category": "生活"
+    },
+    {
+      "id": "deep-work-1",
+      "time": "09:00 — 11:30",
+      "start": "09:00",
+      "end": "11:30",
+      "title": "深度工作（核心业务、架构设计、Agent Runtime）",
+      "category": "工作"
+    },
+    {
+      "id": "lunch",
+      "time": "11:30 — 12:30",
+      "start": "11:30",
+      "end": "12:30",
+      "title": "食堂吃饭、饭后散步",
+      "category": "生活"
+    },
+    {
+      "id": "nap",
+      "time": "12:30 — 13:00",
+      "start": "12:30",
+      "end": "13:00",
+      "title": "午休 20～30 分钟",
+      "category": "休整"
+    },
+    {
+      "id": "work-dev",
+      "time": "13:00 — 15:00",
+      "start": "13:00",
+      "end": "15:00",
+      "title": "工作、项目开发",
+      "category": "工作"
+    },
+    {
+      "id": "break-walk",
+      "time": "15:00 — 15:30",
+      "start": "15:00",
+      "end": "15:30",
+      "title": "散步、休息、补水",
+      "category": "休整"
+    },
+    {
+      "id": "work-delivery",
+      "time": "15:30 — 17:30",
+      "start": "15:30",
+      "end": "17:30",
+      "title": "工作、代码实现、业务交付",
+      "category": "工作"
+    },
+    {
+      "id": "dinner",
+      "time": "17:30 — 18:30",
+      "start": "17:30",
+      "end": "18:30",
+      "title": "晚餐、饭后散步",
+      "category": "生活"
+    },
+    {
+      "id": "free-rest",
+      "time": "18:30 — 19:00",
+      "start": "18:30",
+      "end": "19:00",
+      "title": "自由休息（不睡）",
+      "category": "休整"
+    },
+    {
+      "id": "work-wrapup",
+      "time": "19:00 — 21:00",
+      "start": "19:00",
+      "end": "21:00",
+      "title": "工作收尾、技术研究、项目整理",
+      "category": "工作"
+    },
+    {
+      "id": "night-wash",
+      "time": "21:00 — 21:30",
+      "start": "21:00",
+      "end": "21:30",
+      "title": "洗漱、放松",
+      "category": "生活"
+    },
+    {
+      "id": "study-interview",
+      "time": "21:30 — 22:30",
+      "start": "21:30",
+      "end": "22:30",
+      "title": "学习、准备面试",
+      "category": "学习"
+    },
+    {
+      "id": "game-entertainment",
+      "time": "22:30 — 23:00",
+      "start": "22:30",
+      "end": "23:00",
+      "title": "游戏、娱乐，准备睡觉",
+      "category": "娱乐"
+    },
+    {
+      "id": "sleep",
+      "time": "23:00 — 07:30",
+      "start": "23:00",
+      "end": "07:30",
+      "title": "睡眠（保证 8.5 小时卧床）",
+      "category": "睡眠"
+    }
+  ],
+  "dailyLogs": [
+    {
+      "date": "2026-11-26",
+      "weekday": "周四",
+      "tag": "今日",
+      "completionRate": 93,
+      "items": [
+        {
+          "planId": "morning-routine",
+          "actualTime": "07:30 — 08:50",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "07:30 闹钟响即起，散步 20 分钟后早餐"
+        },
+        {
+          "planId": "deep-work-1",
+          "actualTime": "09:00 — 11:35",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "攻坚 Agent Runtime 状态机流转设计"
+        },
+        {
+          "planId": "lunch",
+          "actualTime": "11:35 — 12:25",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "食堂快餐，园区散步"
+        },
+        {
+          "planId": "nap",
+          "actualTime": "12:30 — 12:55",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "午休 25 分钟，精神饱满"
+        },
+        {
+          "planId": "work-dev",
+          "actualTime": "13:00 — 15:05",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "调度器多端适配与单测编写"
+        },
+        {
+          "planId": "break-walk",
+          "actualTime": "15:05 — 15:30",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "楼下散步补水，活动肩颈"
+        },
+        {
+          "planId": "work-delivery",
+          "actualTime": "15:30 — 17:30",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "跑通回归用例，完成业务交付与提测"
+        },
+        {
+          "planId": "dinner",
+          "actualTime": "17:35 — 18:30",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "晚餐清淡，饭后微步 25 分钟"
+        },
+        {
+          "planId": "free-rest",
+          "actualTime": "18:30 — 19:00",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "听音乐静坐整理台面，未卧床"
+        },
+        {
+          "planId": "work-wrapup",
+          "actualTime": "19:00 — 21:00",
+          "status": "in-progress",
+          "statusText": "进行中",
+          "note": "整理项目技术文档与今日产出总结"
+        },
+        {
+          "planId": "night-wash",
+          "actualTime": "21:00 — 21:30",
+          "status": "pending",
+          "statusText": "待打卡",
+          "note": "热水洗漱，准备睡前环境"
+        },
+        {
+          "planId": "study-interview",
+          "actualTime": "21:30 — 22:30",
+          "status": "pending",
+          "statusText": "待打卡",
+          "note": "复盘分布式并发控制场景题"
+        },
+        {
+          "planId": "game-entertainment",
+          "actualTime": "22:30 — 23:00",
+          "status": "pending",
+          "statusText": "待打卡",
+          "note": "轻度游戏放松，22:55 放下设备"
+        },
+        {
+          "planId": "sleep",
+          "actualTime": "23:00 — 07:30",
+          "status": "pending",
+          "statusText": "待打卡",
+          "note": "准时熄灯就寝，目标睡满 8.5h"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-25",
+      "weekday": "周三",
+      "tag": "全满贯",
+      "completionRate": 100,
+      "items": [
+        {
+          "planId": "morning-routine",
+          "actualTime": "07:30 — 09:00",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "固定 07:30 起床散步，早餐豆浆全麦包"
+        },
+        {
+          "planId": "deep-work-1",
+          "actualTime": "09:05 — 11:30",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "聚焦多智能体协同机制落地"
+        },
+        {
+          "planId": "lunch",
+          "actualTime": "11:30 — 12:20",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "食堂就餐，散步 15 分钟"
+        },
+        {
+          "planId": "nap",
+          "actualTime": "12:30 — 12:55",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "午睡 25 分钟"
+        },
+        {
+          "planId": "work-dev",
+          "actualTime": "13:00 — 15:00",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "重构 API 网关中间件拦截链路"
+        },
+        {
+          "planId": "break-walk",
+          "actualTime": "15:00 — 15:25",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "楼下散步 20 分钟补水"
+        },
+        {
+          "planId": "work-delivery",
+          "actualTime": "15:30 — 17:30",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "联调接口完成回归并提测"
+        },
+        {
+          "planId": "dinner",
+          "actualTime": "17:35 — 18:25",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "清淡晚餐，散步消化"
+        },
+        {
+          "planId": "free-rest",
+          "actualTime": "18:30 — 19:00",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "阅读科技早报，未入睡"
+        },
+        {
+          "planId": "work-wrapup",
+          "actualTime": "19:00 — 20:55",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "整理测试反馈与待办文档"
+        },
+        {
+          "planId": "night-wash",
+          "actualTime": "21:00 — 21:30",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "洗漱完毕换暗暖色阅读灯"
+        },
+        {
+          "planId": "study-interview",
+          "actualTime": "21:30 — 22:30",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "复盘分布式锁与高并发缓存题"
+        },
+        {
+          "planId": "game-entertainment",
+          "actualTime": "22:30 — 22:58",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "Steam Deck 游戏放松 28 分钟"
+        },
+        {
+          "planId": "sleep",
+          "actualTime": "23:02 — 07:30",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "23:02 入睡，次日 07:30 清醒（睡满 8h28m）"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-24",
+      "weekday": "周二",
+      "tag": "优秀",
+      "completionRate": 95,
+      "items": [
+        {
+          "planId": "morning-routine",
+          "actualTime": "07:30 — 08:55",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "准时起床散步，状态良好"
+        },
+        {
+          "planId": "deep-work-1",
+          "actualTime": "09:00 — 11:30",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "核心算法复杂度优化分析"
+        },
+        {
+          "planId": "lunch",
+          "actualTime": "11:30 — 12:20",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "食堂简餐，散步两圈"
+        },
+        {
+          "planId": "nap",
+          "actualTime": "12:30 — 12:55",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "午休 25 分钟"
+        },
+        {
+          "planId": "work-dev",
+          "actualTime": "13:00 — 15:15",
+          "status": "delayed",
+          "statusText": "延后15m",
+          "note": "紧急排查联调问题顺延 15 分钟"
+        },
+        {
+          "planId": "break-walk",
+          "actualTime": "15:15 — 15:35",
+          "status": "delayed",
+          "statusText": "顺延",
+          "note": "散步 20 分钟补水"
+        },
+        {
+          "planId": "work-delivery",
+          "actualTime": "15:35 — 17:35",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "完成补丁发布合入主干"
+        },
+        {
+          "planId": "dinner",
+          "actualTime": "17:40 — 18:30",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "晚餐散步 25 分钟"
+        },
+        {
+          "planId": "free-rest",
+          "actualTime": "18:30 — 19:00",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "自由休息未睡"
+        },
+        {
+          "planId": "work-wrapup",
+          "actualTime": "19:00 — 21:00",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "代码 Review 与技术沉淀"
+        },
+        {
+          "planId": "night-wash",
+          "actualTime": "21:00 — 21:30",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "洗漱完毕"
+        },
+        {
+          "planId": "study-interview",
+          "actualTime": "21:30 — 22:30",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "分布式事务与 TCC 模型"
+        },
+        {
+          "planId": "game-entertainment",
+          "actualTime": "22:30 — 23:00",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "游戏放松 30 分钟"
+        },
+        {
+          "planId": "sleep",
+          "actualTime": "23:05 — 07:30",
+          "status": "on-time",
+          "statusText": "准时",
+          "note": "准点入睡，睡眠 8 小时 25 分钟"
+        }
+      ]
+    }
+  ]
+}

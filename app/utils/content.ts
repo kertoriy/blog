@@ -14,6 +14,7 @@
 
 import aboutFile from '~/content/about.json'
 import friendsFile from '~/content/friends.json'
+import routineFile from '~/content/routine.json'
 import siteFile from '~/content/site.json'
 import sitesFile from '~/content/sites.json'
 
@@ -256,3 +257,52 @@ export const aboutGames = aboutFile.games as AboutGame[]
 export const aboutPersonality = aboutFile.personality as AboutPersonality
 export const aboutFutureStatus = aboutFile.futureStatus as AboutFutureStatus
 export const aboutSocials = aboutFile.socials as AboutSocial[]
+
+/* -------------------------------------------------------------------------- */
+/* 作息打卡                                                                    */
+/* -------------------------------------------------------------------------- */
+
+export interface RoutinePlanItem {
+  id: string
+  time: string
+  start: string
+  end: string
+  title: string
+  desc: string
+  advice?: string
+  category: '生活' | '工作' | '休整' | '就餐' | '学习' | '娱乐' | '睡眠'
+  icon: string
+}
+
+export type RoutineCheckStatus = 'on-time' | 'early' | 'delayed' | 'in-progress' | 'pending' | 'skipped'
+
+export interface RoutineCheckItem {
+  planId: string
+  actualTime: string
+  status: RoutineCheckStatus
+  statusText: string
+  note: string
+}
+
+export interface RoutineDailyLog {
+  date: string
+  weekday: string
+  tag: string
+  summary: string
+  completionRate: number
+  items: RoutineCheckItem[]
+}
+
+export interface RoutineMeta {
+  title: string
+  subtitle: string
+  targetWakeup: string
+  targetBedtime: string
+  targetSleepHours: number
+  targetDeepWorkHours: number
+  streakDays: number
+}
+
+export const routineMeta = routineFile.meta as RoutineMeta
+export const routinePlans = routineFile.plans as RoutinePlanItem[]
+export const routineDailyLogs = routineFile.dailyLogs as RoutineDailyLog[]

@@ -44,6 +44,7 @@ const routeTitles: Record<string, string> = {
   '/archive': '归档',
   '/sites': '常用网站',
   '/friends': '友链',
+  '/routine': '作息打卡',
   '/trash': '赛博情绪垃圾桶',
   '/about': '关于'
 }

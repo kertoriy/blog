@@ -1,0 +1,325 @@
+@reference "./main.css";
+@layer theme, base, components, utilities;
+
+/* 作息打卡：中心事件与左右时间保持同一行对照。 */
+@layer components {
+  /* 沿用站点的左右留白，只去掉会导致吸顶位移的上边距。 */
+  .blog-content:has(> .routine-page) {
+    padding-block-start: 0;
+  }
+
+  .routine-page {
+    --routine-sticky-offset: 0px;
+    @apply relative w-full pb-2;
+    scroll-margin-block-start: var(--routine-sticky-offset);
+  }
+
+  .routine-sticky-head {
+    @apply sticky z-20 grid gap-1 rounded-t-panel bg-canvas pb-1;
+    inset-block-start: var(--routine-sticky-offset);
+  }
+
+  .routine-topbar {
+    --routine-week-width: 27rem;
+    @apply grid items-center gap-x-2 gap-y-1.5 pt-2 pb-0.5;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .routine-stats-button,
+  .routine-date-picker-button {
+    @apply relative z-10 row-start-1 inline-flex min-h-8 cursor-pointer items-center gap-1.5 rounded-full border border-border bg-surface px-2.5 text-xs font-medium whitespace-nowrap text-ink-secondary hover:bg-surface-hover hover:text-ink;
+  }
+
+  .routine-stats-button {
+    @apply col-start-1 justify-self-start;
+  }
+
+  .routine-date-picker-button {
+    @apply col-start-2 justify-self-end;
+  }
+
+  .routine-week-picker {
+    @apply relative z-10 col-span-full row-start-2 flex w-full min-w-0 items-center justify-self-center gap-1.5;
+    max-width: var(--routine-week-width);
+  }
+
+  .routine-week-button {
+    @apply grid size-8 shrink-0 cursor-pointer place-items-center rounded-full border border-border bg-surface text-ink-secondary hover:bg-surface-hover disabled:cursor-default disabled:opacity-40;
+  }
+
+  .routine-date-tabs {
+    @apply grid min-w-0 flex-1 grid-cols-7 items-center gap-0.5 rounded-card border border-border/85 p-0.5;
+    background-color: var(--ui-bar-bg);
+  }
+
+  .routine-period-picker {
+    @apply max-w-xs;
+  }
+
+  .routine-period-tabs {
+    @apply grid-cols-4;
+  }
+
+  .routine-date-tab {
+    @apply relative flex min-h-9 min-w-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-full px-0.5 text-xs leading-none whitespace-nowrap text-ink-secondary transition-colors duration-150 hover:text-ink;
+  }
+
+  .routine-tab-weekday {
+    @apply font-semibold;
+  }
+
+  .routine-date-tab time {
+    @apply font-mono text-[10.5px] text-ink-muted tabular-nums;
+  }
+
+  .routine-date-tab:has(:checked) {
+    @apply bg-canvas text-accent-ink;
+    box-shadow: var(--ui-shadow-control);
+  }
+
+  .routine-date-tab:has(:focus-visible) {
+    @apply outline-2 outline-offset-1 outline-accent;
+  }
+
+  .routine-axis-stage {
+    --routine-time-width: clamp(3.25rem, 22%, 9rem);
+    --routine-plan-tone: #7fa8fb;
+    --routine-actual-tone: #66c8b8;
+    @apply w-full;
+  }
+
+  :root[data-theme='light'] .routine-axis-stage {
+    --routine-plan-tone: #3464bc;
+    --routine-actual-tone: #167568;
+  }
+
+  .routine-column-plan {
+    --routine-column-tone: var(--routine-plan-tone);
+  }
+
+  .routine-column-event {
+    --routine-column-tone: var(--ui-accent);
+  }
+
+  .routine-column-actual {
+    --routine-column-tone: var(--routine-actual-tone);
+  }
+
+  .routine-axis-header,
+  .routine-axis-row {
+    @apply grid w-full gap-2 sm:gap-4;
+    grid-template-columns: var(--routine-time-width) minmax(0, 1fr) var(--routine-time-width);
+  }
+
+  .routine-axis-header {
+    @apply min-h-9 items-center rounded-full text-center text-xs font-medium leading-tight whitespace-nowrap text-ink-secondary;
+    background-color: var(--ui-bar-bg);
+  }
+
+  .routine-axis-header > span {
+    color: color-mix(in srgb, var(--routine-column-tone) 62%, var(--ui-ink));
+  }
+
+  .routine-axis-body {
+    @apply grid gap-1.5 select-none;
+  }
+
+  .routine-axis-row {
+    /* 单行记录保持紧凑，内容换行时允许整行一起增高。 */
+    @apply relative min-h-11 items-stretch py-1.5;
+  }
+
+  /* 顶栏和记录行共用渐变虚线；背景不透明的控件和信息框遮住经过文字的部分。 */
+  .routine-topbar::before,
+  .routine-axis-row::before {
+    content: '';
+    @apply pointer-events-none h-px opacity-55;
+    background-image: linear-gradient(90deg, var(--routine-plan-tone), var(--ui-accent), var(--routine-actual-tone));
+    mask-image: repeating-linear-gradient(90deg, #000 0 4px, transparent 4px 7px);
+  }
+
+  .routine-topbar::before {
+    @apply col-span-full row-start-1 mx-4 self-center;
+  }
+
+  .routine-axis-row::before {
+    @apply absolute top-1/2 -translate-y-1/2;
+    inset-inline: calc(var(--routine-time-width) / 2);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .routine-axis-body.is-entering .routine-axis-row {
+      animation: routine-row-appear 200ms ease-out var(--routine-row-delay) backwards;
+    }
+
+    @keyframes routine-row-appear {
+      from { opacity: 0; translate: 0 6px; }
+      to { opacity: 1; translate: 0 0; }
+    }
+  }
+
+  .routine-time-cell {
+    @apply grid min-w-0;
+  }
+
+  .routine-row-label {
+    @apply relative z-10 grid min-h-8 min-w-0 max-w-full place-items-center rounded-inner border px-1.5 py-0.5 text-center;
+    background-color: color-mix(in srgb, var(--routine-column-tone) 8%, var(--ui-canvas));
+    border-color: color-mix(in srgb, var(--routine-column-tone) 38%, transparent);
+  }
+
+  .routine-time {
+    @apply w-full font-mono text-xs leading-[1.4] font-medium tabular-nums;
+    color: color-mix(in srgb, var(--routine-column-tone) 32%, var(--ui-ink));
+    text-wrap: balance;
+  }
+
+  .routine-event {
+    @apply px-3 text-sm leading-[1.45] font-normal text-ink;
+    text-wrap: balance;
+    line-break: strict;
+    overflow-wrap: anywhere;
+  }
+
+  .routine-event-cell {
+    @apply grid min-w-0 justify-items-center px-2;
+  }
+
+  .routine-dialog {
+    @apply fixed inset-0 m-auto max-h-[calc(100dvh-2rem)] max-w-none overflow-y-auto rounded-panel border border-border bg-canvas p-5 text-ink;
+    width: min(28rem, calc(100% - 2rem));
+    box-shadow: var(--ui-shadow-float);
+  }
+
+  .routine-dialog::backdrop {
+    background: rgb(9 7 15 / 0.55);
+  }
+
+  .routine-date-dialog {
+    width: min(22rem, calc(100% - 2rem));
+  }
+
+  .routine-date-form {
+    @apply grid gap-4;
+  }
+
+  .routine-date-form h2 {
+    @apply text-base font-semibold;
+  }
+
+  .routine-picker-input {
+    @apply min-h-10 w-full min-w-0 rounded-inner border border-border-strong bg-surface px-3 text-base text-ink;
+    color-scheme: dark;
+  }
+
+  :root[data-theme='light'] .routine-picker-input {
+    color-scheme: light;
+  }
+
+  .routine-picker-actions {
+    @apply flex flex-wrap justify-end gap-2;
+  }
+
+  .routine-stats-view {
+    @apply mt-3 mb-4 w-full rounded-card border border-white bg-canvas p-3 sm:mt-4 sm:p-4;
+  }
+
+  :root[data-theme='light'] .routine-stats-view {
+    /* 白色描边在白底上需要一层对比色，外描边不占用布局空间。 */
+    outline: 1px solid color-mix(in srgb, var(--ui-border-strong) 88%, var(--ui-ink));
+  }
+
+  .routine-stats-panel-header {
+    @apply flex flex-wrap items-center justify-between gap-2;
+  }
+
+  .routine-stats-date-range {
+    @apply text-xs text-ink-muted tabular-nums;
+  }
+
+  .routine-stats-chart {
+    --routine-chart-label-height: 1.5rem;
+    --routine-chart-bottom-padding: 0.5rem;
+    --routine-chart-guide: color-mix(in srgb, var(--ui-border-strong) 75%, var(--ui-surface-subtle));
+    @apply relative mt-3 grid h-48 rounded-inner bg-surface px-1 pt-6 sm:h-60 sm:px-3;
+    grid-template-columns: repeat(var(--routine-chart-columns), minmax(0, 1fr));
+    padding-block-end: var(--routine-chart-bottom-padding);
+  }
+
+  .routine-stats-chart::before {
+    content: '';
+    @apply pointer-events-none absolute inset-x-1 top-6 border-b sm:inset-x-3;
+    /* 底线扣除灰底内边距和横轴标签高度，与柱底对齐。 */
+    inset-block-end: calc(var(--routine-chart-bottom-padding) + var(--routine-chart-label-height));
+    border-color: var(--routine-chart-guide);
+    background-image: repeating-linear-gradient(to top, transparent 0 calc(25% - 1px), var(--routine-chart-guide) calc(25% - 1px) 25%);
+  }
+
+  .routine-stats-chart li {
+    @apply relative grid min-w-0 text-center;
+    grid-template-rows: minmax(0, 1fr) var(--routine-chart-label-height);
+  }
+
+  .routine-stats-bar-slot {
+    @apply relative flex items-end justify-center;
+  }
+
+  .routine-stats-bar {
+    @apply w-3/5 max-w-10 rounded-t-full bg-accent;
+    height: var(--routine-bar-height);
+  }
+
+  .routine-stats-bar-value {
+    @apply absolute text-xs text-ink-secondary tabular-nums;
+    inset-block-end: calc(var(--routine-bar-height) + 0.25rem);
+  }
+
+  .routine-stats-chart-label {
+    @apply self-end text-xs whitespace-nowrap text-ink-muted;
+  }
+
+  @media (width < 52rem) {
+    .routine-page {
+      /* 手机用整页滚动，吸顶栏留在站点顶栏和内容卡片上边框下方。 */
+      --routine-sticky-offset: 53px;
+    }
+  }
+
+  @container blog-content (width >= 40rem) {
+    .routine-topbar {
+      grid-template-columns: minmax(0, 1fr) var(--routine-week-width) minmax(0, 1fr);
+    }
+
+    .routine-week-picker {
+      @apply col-start-2 col-end-3 row-start-1;
+    }
+
+    .routine-date-picker-button {
+      @apply col-start-3;
+    }
+  }
+
+  @container blog-content (width < 38rem) {
+    .routine-week-picker.has-week-navigation {
+      @apply grid grid-cols-2;
+    }
+
+    .routine-week-picker.has-week-navigation .routine-date-tabs {
+      @apply col-span-2 row-start-2;
+    }
+
+    .routine-week-picker.has-week-navigation .routine-week-button:last-child {
+      @apply col-start-2 row-start-1 justify-self-end;
+    }
+  }
+
+  @container blog-content (width < 32rem) {
+    .routine-event {
+      @apply px-2 text-[13px];
+    }
+
+    .routine-stats-chart.is-dense :is(.routine-stats-chart-label, .routine-stats-bar-value) {
+      @apply text-[10px] tracking-tight;
+    }
+  }
+}
