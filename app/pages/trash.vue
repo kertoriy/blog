@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ComponentPublicInstance } from 'vue'
-import { Check, Pencil, Volume2, VolumeX } from 'lucide-vue-next'
+import { Check, Pencil } from 'lucide-vue-next'
 import '~/assets/css/blog-trash.css'
 
 useSeoMeta({
@@ -211,7 +211,6 @@ const targetInputRef = useTemplateRef<HTMLInputElement>('targetInputRef')
 
 const objectName = ref('线上 Bug')
 const isEditingTarget = ref(false)
-const soundEnabled = ref(true)
 const combo = ref(0)
 
 const displayObjectName = computed(() => objectName.value.trim() || '未命名对象')
@@ -222,7 +221,6 @@ const MAX_RINGS = 14
 const MAX_PARTICLES = 96
 const MAX_DECALS = 8
 const MAX_POPUPS = 8
-const MIN_SLAP_AUDIO_GAP_MS = 32
 const MIN_DOM_ANIM_GAP_MS = 95
 
 const activeFlights: ActiveFlight[] = []
@@ -232,15 +230,10 @@ const activeDecals: CanvasDecal[] = []
 const activePopups: CanvasPopup[] = []
 
 let lastPleaIndex = -1
-let lastSlapAt = 0
 let lastDomAnimAt = 0
 let rafId: number | null = null
 let fxCtx: CanvasRenderingContext2D | null = null
 let popupHaloColor = '#ffffff'
-
-let audioCtx: AudioContext | null = null
-let slapBusInput: GainNode | null = null
-let noiseBuffer: AudioBuffer | null = null
 
 let comboTimer: ReturnType<typeof setTimeout> | undefined
 let hitPoseTimer: ReturnType<typeof setTimeout> | undefined
@@ -347,110 +340,6 @@ function finishEditTarget() {
   isEditingTarget.value = false
 }
 
-function ensureAudio() {
-  if (!import.meta.client) return null
-  const AudioCtor = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
-  if (!AudioCtor) return null
-  if (!audioCtx) audioCtx = new AudioCtor()
-  if (audioCtx.state === 'suspended') void audioCtx.resume()
-
-  if (!noiseBuffer) {
-    const sampleRate = audioCtx.sampleRate
-    const length = Math.floor(sampleRate * 0.3)
-    const buffer = audioCtx.createBuffer(1, length, sampleRate)
-    const data = buffer.getChannelData(0)
-    for (let i = 0; i < length; i++) {
-      data[i] = Math.random() * 2 - 1
-    }
-    noiseBuffer = buffer
-  }
-
-  // 复用单条公共滤波总线 + 动态压缩器，高速连打不堆积 AudioNode、不削波卡顿
-  if (!slapBusInput) {
-    const input = audioCtx.createGain()
-
-    const highpass = audioCtx.createBiquadFilter()
-    highpass.type = 'highpass'
-    highpass.frequency.value = 980
-    highpass.Q.value = 0.7
-
-    const presence = audioCtx.createBiquadFilter()
-    presence.type = 'peaking'
-    presence.frequency.value = 2350
-    presence.Q.value = 1.05
-    presence.gain.value = 7.5
-
-    const lowpass = audioCtx.createBiquadFilter()
-    lowpass.type = 'lowpass'
-    lowpass.frequency.value = 6800
-
-    const compressor = audioCtx.createDynamicsCompressor()
-    compressor.threshold.value = -10
-    compressor.knee.value = 12
-    compressor.ratio.value = 6
-    compressor.attack.value = 0.002
-    compressor.release.value = 0.06
-
-    input.connect(highpass)
-    highpass.connect(presence)
-    presence.connect(lowpass)
-    lowpass.connect(compressor)
-    compressor.connect(audioCtx.destination)
-
-    slapBusInput = input
-  }
-
-  return audioCtx
-}
-
-/**
- * 统一清脆「啪！啪！啪！」拍打瞬态音效（复用滤波总线 + 32ms 节流防爆音，全道具一致）
- */
-function playSlapSound(nowMs: number) {
-  if (!soundEnabled.value) return
-  if (nowMs - lastSlapAt < MIN_SLAP_AUDIO_GAP_MS) return
-  lastSlapAt = nowMs
-
-  try {
-    const ctx = ensureAudio()
-    if (!ctx || !noiseBuffer || !slapBusInput) return
-    const now = ctx.currentTime
-
-    // 1. 极速清脆起音「P-」
-    const crackSrc = ctx.createBufferSource()
-    crackSrc.buffer = noiseBuffer
-    const crackGain = ctx.createGain()
-    crackGain.gain.setValueAtTime(0.001, now)
-    crackGain.gain.linearRampToValueAtTime(0.76, now + 0.001)
-    crackGain.gain.exponentialRampToValueAtTime(0.001, now + 0.017)
-    crackSrc.connect(crackGain)
-    crackGain.connect(slapBusInput)
-    crackSrc.onended = () => {
-      crackSrc.disconnect()
-      crackGain.disconnect()
-    }
-    crackSrc.start(now, Math.random() * 0.14, 0.024)
-
-    // 2. 清亮巴掌回响「-A!」
-    const tailSrc = ctx.createBufferSource()
-    tailSrc.buffer = noiseBuffer
-    const tailGain = ctx.createGain()
-    tailGain.gain.setValueAtTime(0.001, now + 0.004)
-    tailGain.gain.linearRampToValueAtTime(0.54, now + 0.0055)
-    tailGain.gain.exponentialRampToValueAtTime(0.001, now + 0.048)
-    tailSrc.connect(tailGain)
-    tailGain.connect(slapBusInput)
-    tailSrc.onended = () => {
-      tailSrc.disconnect()
-      tailGain.disconnect()
-    }
-    tailSrc.start(now + 0.004, Math.random() * 0.14, 0.056)
-  }
-  catch {
-    // 忽略浏览器自动播放策略限制
-  }
-}
-
 function pickPleaLine() {
   let idx = Math.floor(Math.random() * pleaLines.length)
   if (idx === lastPleaIndex && pleaLines.length > 1) {
@@ -504,12 +393,12 @@ function triggerImpact(flight: ActiveFlight, now: number) {
   const { weapon, endX, endY, direction } = flight
   combo.value += 1
 
+  // 连击在最后一次命中后计时，连续命中会延长计数的保留时间。
   clearTimeout(comboTimer)
   comboTimer = setTimeout(() => {
     combo.value = 0
   }, 2200)
 
-  playSlapSound(now)
   triggerDomFeedback(weapon, direction, now)
 
   // 1. 冲击波圆环（带数量上限）
@@ -853,24 +742,13 @@ onBeforeUnmount(() => {
   clearTimeout(placardTimer)
   pressTimers.forEach(timer => clearTimeout(timer))
   pressTimers.clear()
-  void audioCtx?.close()
 })
 </script>
 
 <template>
   <div class="trash-page">
-    <!-- 中间互动舞台 -->
-    <section
-      ref="stageRef"
-      class="trash-stage"
-      aria-label="赛博情绪宣泄舞台"
-    >
-      <div class="trash-stage-bg" aria-hidden="true">
-        <span class="trash-stage-aura" />
-        <span class="trash-stage-dots" />
-        <span class="trash-stage-watermark">VENT</span>
-      </div>
-
+    <!-- 工具栏对齐正文边缘，放在舞台外以免按钮的焦点轮廓被裁切。 -->
+    <div class="trash-toolbar">
       <!-- 左上角：常驻 COMBO 连击计数 -->
       <div
         ref="comboBadgeRef"
@@ -882,31 +760,31 @@ onBeforeUnmount(() => {
         <strong class="trash-combo-value">×{{ combo }}</strong>
       </div>
 
-      <!-- 右上角：编辑对象与音效控制 -->
-      <div class="trash-stage-tools">
-        <button
-          type="button"
-          class="trash-edit-btn"
-          :class="{ 'is-active': isEditingTarget }"
-          :title="isEditingTarget ? '完成编辑挂牌对象' : '编辑挂牌对象名称'"
-          :aria-label="isEditingTarget ? '完成编辑挂牌对象' : '编辑挂牌对象名称'"
-          @mousedown.prevent
-          @click="toggleEditTarget"
-        >
-          <Check v-if="isEditingTarget" :size="13.5" aria-hidden="true" />
-          <Pencil v-else :size="13" aria-hidden="true" />
-          <span>{{ isEditingTarget ? '完成' : '编辑对象' }}</span>
-        </button>
-        <button
-          type="button"
-          class="trash-tool-btn"
-          :title="soundEnabled ? '关闭音效' : '开启音效'"
-          :aria-label="soundEnabled ? '关闭音效' : '开启音效'"
-          @click="soundEnabled = !soundEnabled"
-        >
-          <Volume2 v-if="soundEnabled" :size="14" aria-hidden="true" />
-          <VolumeX v-else :size="14" aria-hidden="true" />
-        </button>
+      <button
+        type="button"
+        class="trash-edit-btn"
+        :class="{ 'is-active': isEditingTarget }"
+        :title="isEditingTarget ? '完成编辑挂牌对象' : '编辑挂牌对象名称'"
+        :aria-label="isEditingTarget ? '完成编辑挂牌对象' : '编辑挂牌对象名称'"
+        @mousedown.prevent
+        @click="toggleEditTarget"
+      >
+        <Check v-if="isEditingTarget" :size="13.5" aria-hidden="true" />
+        <Pencil v-else :size="13" aria-hidden="true" />
+        <span>{{ isEditingTarget ? '完成' : '编辑对象' }}</span>
+      </button>
+    </div>
+
+    <!-- 中间互动舞台 -->
+    <section
+      ref="stageRef"
+      class="trash-stage"
+      aria-label="赛博情绪宣泄舞台"
+    >
+      <div class="trash-stage-bg" aria-hidden="true">
+        <span class="trash-stage-aura" />
+        <span class="trash-stage-dots" />
+        <span class="trash-stage-watermark">VENT</span>
       </div>
 
       <!-- 中央 IP 形象 + 挂在脖子中间的囚犯牌（仅展示受击，不可直接点击） -->

@@ -5,7 +5,7 @@
 @layer components {
   .trash-page {
     min-height: calc(100dvh - 102px);
-    @apply flex w-full flex-col justify-between gap-3 py-1 select-none;
+    @apply relative flex w-full flex-col justify-between gap-3 py-1 select-none;
   }
 
   /* 中间互动舞台 */
@@ -42,8 +42,12 @@
   }
 
   /* 左上角常驻 COMBO 与右上角轻量化工具 */
+  .trash-toolbar {
+    @apply pointer-events-none absolute inset-x-0 top-1 z-20 flex items-center justify-between gap-2;
+  }
+
   .trash-combo-badge {
-    @apply pointer-events-none absolute top-4 left-5 z-20 inline-flex h-[32px] items-center gap-1.5 rounded-full border border-border/80 px-3.5 font-mono text-[12px] font-bold tracking-[0.04em] text-ink-muted transition-[border-color,background-color,color] duration-150;
+    @apply inline-flex h-[32px] items-center gap-1.5 rounded-full border border-border/80 px-3.5 font-mono text-[12px] font-bold tracking-[0.04em] text-ink-muted transition-[border-color,background-color,color] duration-150;
     background-color: var(--ui-bar-bg);
     will-change: transform;
   }
@@ -72,12 +76,8 @@
     100% { transform: scale(1); }
   }
 
-  .trash-stage-tools {
-    @apply absolute top-4 right-5 z-20 flex items-center gap-2;
-  }
-
   .trash-edit-btn {
-    @apply inline-flex h-[32px] cursor-pointer items-center gap-1.5 rounded-full border border-border/80 px-3 text-[12px] font-medium text-ink-secondary transition-[border-color,color,background-color] duration-150 hover:border-border-strong hover:text-ink;
+    @apply pointer-events-auto inline-flex h-[32px] cursor-pointer items-center gap-1.5 rounded-full border border-border/80 px-3 text-[12px] font-medium text-ink-secondary transition-[border-color,color,background-color] duration-150 hover:border-border-strong hover:text-ink;
     background-color: var(--ui-bar-bg);
   }
 
@@ -85,11 +85,6 @@
     border-color: color-mix(in srgb, var(--ui-accent) 52%, var(--ui-border));
     background-color: var(--ui-accent-soft);
     @apply font-semibold text-accent-ink;
-  }
-
-  .trash-tool-btn {
-    @apply inline-grid size-[32px] cursor-pointer place-items-center rounded-full border border-border/80 text-ink-secondary transition-[border-color,color,background-color] duration-150 hover:border-border-strong hover:text-ink;
-    background-color: var(--ui-bar-bg);
   }
 
   /* 中央 IP 形象区 */
